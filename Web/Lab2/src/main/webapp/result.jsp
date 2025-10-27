@@ -39,8 +39,13 @@
     <a href="controller">Назад к форме</a>
 </div>
 
+<script>
+// Очищаем флаг платежа после успешной обработки
+localStorage.removeItem("paymentInProgress");
+</script>
+
 <div class="video-container">
-    <video autoplay muted loop>
+    <video autoplay loop muted>
         <source src="videos/background.mp4" type="video/mp4">
         Ваш браузер не поддерживает видео.
     </video>

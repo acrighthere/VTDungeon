@@ -16,7 +16,8 @@ public final class RequestUtils {
   }
 
   public static boolean isValidX(double x) {
-    return X_VALUES.contains((int) x);
+    // Проверяем, что x находится в допустимом диапазоне и является целым числом
+    return x >= -5 && x <= 3 && x == (int) x && X_VALUES.contains((int) x);
   }
 
   public static boolean isValidY(double y) {

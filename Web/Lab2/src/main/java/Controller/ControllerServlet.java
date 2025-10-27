@@ -1,6 +1,7 @@
 package Controller;
 
 import Util.RequestUtils;
+import Util.RequestUtils.InputParams;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +14,14 @@ public class ControllerServlet extends HttpServlet {
       throws ServletException, IOException {
 
     RequestUtils.setupCommonAttributes(req);
+
     String action = req.getParameter("action");
     if ("reset".equals(action)) {
       getServletContext().removeAttribute("results");
       resp.setStatus(HttpServletResponse.SC_OK);
       return;
     }
+
     boolean isSubmitted =
         req.getParameterMap().containsKey("x")
             || req.getParameterMap().containsKey("y")
@@ -29,11 +32,13 @@ public class ControllerServlet extends HttpServlet {
       return;
     }
 
-    RequestUtils.InputParams params = RequestUtils.extractAndValidate(req);
+    InputParams params = RequestUtils.extractAndValidate(req);
 
     if (params != null) {
       req.setAttribute("validatedParams", params);
-      req.getRequestDispatcher("/areaCheck").forward(req, resp);
+
+      req.getRequestDispatcher("/payment").forward(req, resp);
+
     } else {
       req.setAttribute("errorMessage", "Некорректные или отсутствующие параметры!");
       req.getRequestDispatcher("/index.jsp").forward(req, resp);

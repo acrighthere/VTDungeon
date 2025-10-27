@@ -20,9 +20,25 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Видео изначально без звука
-    video.muted = false;
+    video.muted = true;
     video.volume = 0;
 
-    video.addEventListener("mouseenter", () => fadeVolume(1)); // плавно включаем звук
-    video.addEventListener("mouseleave", () => fadeVolume(0)); // плавно выключаем звук
+    let userInteracted = false;
+    
+    // Отслеживаем взаимодействие пользователя
+    document.addEventListener("click", () => { userInteracted = true; });
+    document.addEventListener("keydown", () => { userInteracted = true; });
+    
+    video.addEventListener("mouseenter", () => {
+        if (userInteracted) {
+            video.muted = false;
+            fadeVolume(1); // плавно включаем звук
+        }
+    });
+    
+    video.addEventListener("mouseleave", () => {
+        if (userInteracted) {
+            fadeVolume(0); // плавно выключаем звук
+        }
+    });
 });

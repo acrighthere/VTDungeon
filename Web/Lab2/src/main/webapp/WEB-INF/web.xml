@@ -9,6 +9,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>PaymentServlet</servlet-name>
+        <servlet-class>Controller.PaymentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PaymentServlet</servlet-name>
+        <url-pattern>/payment</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>AreaCheckServlet</servlet-name>
         <servlet-class>Controller.AreaCheckServlet</servlet-class>
     </servlet>

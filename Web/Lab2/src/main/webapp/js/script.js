@@ -84,6 +84,68 @@ function drawAxes() {
     }
 }
 
+// ----------------- Отправка данных на PaymentServlet -----------------
+function submitPoint(x, y, rValues) {
+    // Округляем x к ближайшему допустимому значению
+    const validXValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3];
+    const roundedX = Math.round(x);
+    const closestX = validXValues.reduce((prev, curr) => 
+        Math.abs(curr - roundedX) < Math.abs(prev - roundedX) ? curr : prev
+    );
+    
+    // Создаем URL-encoded данные
+    const params = new URLSearchParams();
+    params.append("x", closestX);
+    params.append("y", y.toFixed(2));
+    rValues.forEach(r => params.append("r", r));
+
+    console.log("Отправляем параметры:", {
+        x: closestX,
+        y: y.toFixed(2),
+        r: rValues,
+        body: params.toString()
+    });
+
+    fetch("payment", { 
+        method: "POST", 
+        body: params,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+        .then(resp => {
+            console.log("Response status:", resp.status);
+            console.log("Response headers:", resp.headers);
+            if (!resp.ok) {
+                return resp.text().then(text => {
+                    console.error("Server response:", text);
+                    throw new Error(`HTTP ${resp.status}: ${text}`);
+                });
+            }
+            return resp.json();
+        })
+        .then(data => {
+            console.log("Payment response:", data);
+            const confirmationUrl = data.confirmation_url;
+            
+            if (confirmationUrl) {
+                // Сохраняем флаг о том, что платеж в процессе
+                localStorage.setItem("paymentInProgress", "true");
+                
+                // Перенаправляем пользователя на страницу оплаты YooKassa
+                console.log("Перенаправляем на страницу оплаты:", confirmationUrl);
+                window.location.href = confirmationUrl;
+            } else {
+                console.error("Не получен URL для подтверждения платежа");
+                alert("Ошибка: не получен URL для подтверждения платежа");
+            }
+        })
+        .catch(err => {
+            console.error("Payment error:", err);
+            alert("Ошибка при создании платежа: " + err.message);
+        });
+}
+
 // ----------------- Клик по графику -----------------
 canvas.addEventListener("click", e => {
     const rect = canvas.getBoundingClientRect();
@@ -91,49 +153,64 @@ canvas.addEventListener("click", e => {
     const yClick = (center - (e.clientY - rect.top)) / scale;
     const rValues = getSelectedRs();
 
-    if (xClick < -3 || xClick > 5 || yClick < -5 || yClick > 5) {
-        return;
-    }
-
     if (!rValues.length) {
         alert("Выберите хотя бы один R!");
         return;
     }
+    if (xClick < -5 || xClick > 3 || yClick < -5 || yClick > 5) return;
 
-    const params = new URLSearchParams();
-    params.append("x", xClick.toFixed(2));
-    params.append("y", yClick.toFixed(2));
-    rValues.forEach(r => params.append("r", r));
-
-    window.location.href = `controller?${params.toString()}`;
+    submitPoint(xClick, yClick, rValues);
 });
 
-
-// ----------------- Сабмит формы -----------------
-document.getElementById("check-form").addEventListener("submit", e => {
+// ----------------- Обработчик кнопки "Проверить" -----------------
+document.getElementById("submit-btn").addEventListener("click", e => {
     e.preventDefault();
+
     const xRadio = document.querySelector("input[name='x']:checked");
     const x = xRadio ? parseFloat(xRadio.value) : NaN;
     const y = parseFloat(document.getElementById("y-input").value.replace(",", "."));
     const rValues = getSelectedRs();
 
-    if (isNaN(x) || isNaN(y) || !rValues.length || x>3 || x <-5||y<-5||y>5) {
+    if (isNaN(x) || isNaN(y) || !rValues.length || x>3 || x<-5 || y<-5 || y>5) {
         alert("Введите корректные значения X, Y и выберите хотя бы один R!");
         return;
     }
 
-    const params = new URLSearchParams();
-    params.append("x", x);
-    params.append("y", y);
-    rValues.forEach(r => params.append("r", r));
-
-    window.location.href = `controller?${params.toString()}`;
+    submitPoint(x, y, rValues);
 });
 
+// ----------------- Сабмит формы (fallback) -----------------
+document.getElementById("check-form").addEventListener("submit", e => {
+    e.preventDefault();
+    // Делегируем обработку кнопке
+    document.getElementById("submit-btn").click();
+});
+
+// ----------------- Сброс -----------------
 document.getElementById("reset-btn").addEventListener("click", () => {
     fetch("controller?action=reset")
         .then(() => window.location.reload())
         .catch(err => alert("Ошибка при сбросе истории: " + err));
+});
+
+// ----------------- Возврат после оплаты -----------------
+document.getElementById("return-from-payment-btn").addEventListener("click", () => {
+    // Перенаправляем на AreaCheckServlet для обработки результата платежа
+    window.location.href = "areaCheck";
+});
+
+// Показываем кнопку возврата, если есть данные в сессии
+window.addEventListener("load", () => {
+    // Проверяем, есть ли данные о платеже в localStorage (как fallback)
+    const hasPaymentData = localStorage.getItem("paymentInProgress");
+    if (hasPaymentData) {
+        document.getElementById("return-from-payment-btn").style.display = "inline-block";
+    }
+    
+    // Очищаем флаг платежа, если мы на главной странице
+    if (window.location.pathname.includes("index.jsp") || window.location.pathname.endsWith("/")) {
+        localStorage.removeItem("paymentInProgress");
+    }
 });
 
 // ----------------- Перерисовка графика при выборе R -----------------
