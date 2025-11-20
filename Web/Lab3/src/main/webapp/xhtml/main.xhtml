@@ -28,47 +28,39 @@
                 <!-- X -->
                 <h:panelGrid columns="2">
                     <h:outputLabel for="xSpinner" value="X:"/>
-                    <p:spinner id="xSpinner" value="#{areaBean.x}"
-                               min="-5" max="5" step="1"
-                               required="true"
-                               style="width:80px"
-                               readonlyInput="true"/>
+                    <p:spinner id="xSpinner" value="#{areaBean.x}" min="-5" max="5" step="1"
+                               required="true" style="width:80px" readonlyInput="true"/>
                 </h:panelGrid>
 
                 <!-- Y -->
                 <h:panelGrid columns="2">
                     <h:outputLabel for="yInput" value="Y:"/>
-                    <p:inputText id="yInput" value="#{areaBean.y}" required="true"
-                                 label="Y"
-                                 validatorMessage="Введите число от -3 до 5">
+                    <p:inputText id="yInput" value="#{areaBean.y}" required="true">
                         <f:validateDoubleRange minimum="-3" maximum="5"/>
-                        <p:ajax event="keypress" onstart="
-                        var e = event || window.event;
-                        var key = e.key;
-                        if (key.match(/[^0-9.-]/)) { e.preventDefault(); return false; }
-                    "/>
                     </p:inputText>
                 </h:panelGrid>
 
                 <!-- R -->
                 <h:panelGrid columns="2">
                     <h:outputLabel value="R:"/>
-                    <p:selectManyCheckbox id="rCheckbox"
-                                          value="#{areaBean.selectedR}"
-                                          layout="grid" columns="3">
-                        <f:selectItem itemLabel="1" itemValue="1"/>
-                        <f:selectItem itemLabel="2" itemValue="2"/>
-                        <f:selectItem itemLabel="3" itemValue="3"/>
-                        <f:selectItem itemLabel="4" itemValue="4"/>
-                        <f:selectItem itemLabel="5" itemValue="5"/>
-                        <f:convertNumber integerOnly="true"/>
-                    </p:selectManyCheckbox>
+                    <!-- Обернул selectManyCheckbox в div с id="rPanel" -->
+                    <div id="rPanel">
+                        <p:selectManyCheckbox id="rCheckbox" value="#{areaBean.selectedR}"
+                                              layout="grid" columns="3">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                            <f:convertNumber integerOnly="true"/>
+                        </p:selectManyCheckbox>
+                    </div>
                 </h:panelGrid>
 
                 <!-- Кнопка проверки -->
                 <p:commandButton id="checkBtn" value="Проверить"
                                  actionListener="#{areaBean.checkPoint}"
-                                 update=":mainForm:resultsTable :mainForm:canvasPanel"
+                                 update=":mainForm:resultsTable"
                                  style="margin-top:10px"/>
 
                 <!-- Canvas -->
@@ -79,7 +71,7 @@
                 <!-- RemoteCommand -->
                 <p:remoteCommand name="submitFromCanvas"
                                  actionListener="#{areaBean.checkPoint}"
-                                 update=":mainForm:resultsTable :mainForm:canvasPanel"/>
+                                 update=":mainForm:resultsTable"/>
             </h:panelGroup>
 
             <!-- Правая колонка -->
