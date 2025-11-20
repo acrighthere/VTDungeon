@@ -1,58 +1,164 @@
+/* Общие настройки */
+body {
+    font-family: "Times New Roman", serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fafafa;
+    color: #1a1a1a;
+}
+
+/* Шапка */
 .header {
     width: 100%;
-    font-family: "Times New Roman", serif;
-    color: #1a1a1a;
-    font-size: 20px; /* явный размер */
-    margin-bottom: 2%;
-    border-collapse: collapse;
+    text-align: center;
+    padding: 1em 0;
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #ccc;
 }
 
-/* псевдоэлемент: первая буква в имени больше */
+#student-name {
+    margin: 0;
+    font-size: 24px;
+}
+
 #student-name::first-letter {
-    font-size: 28px;
+    font-size: 36px;
+    font-weight: bold;
 }
 
-/* Общая layout-таблица */
-.layout { width: 100%; border-collapse: collapse; }
-.left-col { width: 40%; vertical-align: top; padding-right: 2%; }
-.right-col { width: 60%; vertical-align: top; }
+.header h3 {
+    margin: 0.2em 0 0 0;
+    font-size: 18px;
+}
 
-/* Таблица формы */
-.form-table { width: 100%; border-collapse: collapse; }
-.form-table td { padding: 1%; vertical-align: middle; }
-.form-table caption { text-align: left; font-weight: bold; padding-bottom: 1%; }
+/* Layout формы */
+.layout {
+    width: 95%;
+    margin: 2em auto;
+    display: flex;
+    gap: 2%;
+}
 
-button { padding: 1% 2%; border-radius: 6px; border: 1px solid #bbb; background: #f4f4f4; }
-button:hover { background: #e9e9e9; }
-button:active { transform: translateY(1px); }
+.left-col, .right-col {
+    background: #ffffff;
+    padding: 1em;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
 
-/* Таблица результатов */
-.results { width: 100%; border-collapse: collapse; margin-bottom: 2%; }
-.results th, .results td { border: 1px solid #ddd; padding: 1%; text-align: center; }
-.results thead th { background: #f5f5f5; }
+/* Левая колонка — параметры */
+.left-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
 
-/* псевдокласс для полосатости */
-.results tbody tr:nth-child(even) { background: #fafafa; }
+.left-col h3 {
+    margin-top: 0;
+    font-size: 20px;
+}
 
-/* маленькая таблица мета */
-.meta { width: 100%; border-collapse: collapse; margin-top: 0.5em; }
-.meta td { padding: 0.5% 1%; }
+/* Canvas */
+#canvasPanel {
+    text-align: center;
+    margin-top: 1em;
+}
 
-/* Стиль ошибки */
-.error { color: #b80000; font-weight: bold; }
+#graph {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+}
 
+/* Параметры формы */
+.ui-panelgrid .ui-panelgrid-cell {
+    padding: 0.5em;
+}
+
+input, select, .ui-spinner-input {
+    padding: 0.3em 0.5em;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    width: 100%;
+}
+
+button, .ui-button, .ui-commandbutton {
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    background: #f4f4f4;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+button:hover, .ui-button:hover, .ui-commandbutton:hover {
+    background: #e9e9e9;
+}
+
+button:active, .ui-button:active, .ui-commandbutton:active {
+    transform: translateY(1px);
+}
+
+/* Правая колонка — статус и таблица */
+.right-col {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.right-col h3 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+/* Статус */
 .meta {
     border: 1px solid #ccc;
     border-radius: 6px;
     background: #fdfdfd;
-    margin-bottom: 1em; /* чтобы не слипалось с историей */
+    padding: 0.5em;
+    margin-bottom: 1em;
 }
-.meta caption {
-    text-align: left;
-    font-weight: bold;
-    padding: 0.3em 0.5em;
-}
+
 .meta td:first-child {
     font-weight: bold;
     white-space: nowrap;
+}
+
+/* Таблица результатов */
+.results, .ui-datatable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results th, .results td, .ui-datatable th, .ui-datatable td {
+    border: 1px solid #ddd;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.results thead th, .ui-datatable thead th {
+    background: #f5f5f5;
+}
+
+.results tbody tr:nth-child(even), .ui-datatable tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* Ошибки */
+.error {
+    color: #b80000;
+    font-weight: bold;
+}
+
+/* Ссылки */
+h:link, a {
+    color: #333;
+    text-decoration: none;
+}
+
+h:link:hover, a:hover {
+    text-decoration: underline;
 }

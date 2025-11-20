@@ -6,7 +6,7 @@
 
 <h:head>
     <title>Основная страница — проверка точки</title>
-    <h:outputStylesheet library="css" name="style.css"/>
+    <h:outputStylesheet library="css" name="index.css"/>
     <h:outputScript library="js" name="script.js" target="body"/>
 </h:head>
 
@@ -31,7 +31,8 @@
                     <p:spinner id="xSpinner" value="#{areaBean.x}"
                                min="-5" max="5" step="1"
                                required="true"
-                               style="width:80px"/>
+                               style="width:80px"
+                               readonlyInput="true"/>
                 </h:panelGrid>
 
                 <!-- Y -->
@@ -41,6 +42,11 @@
                                  label="Y"
                                  validatorMessage="Введите число от -3 до 5">
                         <f:validateDoubleRange minimum="-3" maximum="5"/>
+                        <p:ajax event="keypress" onstart="
+                        var e = event || window.event;
+                        var key = e.key;
+                        if (key.match(/[^0-9.-]/)) { e.preventDefault(); return false; }
+                    "/>
                     </p:inputText>
                 </h:panelGrid>
 
@@ -55,13 +61,14 @@
                         <f:selectItem itemLabel="3" itemValue="3"/>
                         <f:selectItem itemLabel="4" itemValue="4"/>
                         <f:selectItem itemLabel="5" itemValue="5"/>
+                        <f:convertNumber integerOnly="true"/>
                     </p:selectManyCheckbox>
                 </h:panelGrid>
 
                 <!-- Кнопка проверки -->
                 <p:commandButton id="checkBtn" value="Проверить"
                                  actionListener="#{areaBean.checkPoint}"
-                                 update="resultsTable canvasPanel"
+                                 update=":mainForm:resultsTable :mainForm:canvasPanel"
                                  style="margin-top:10px"/>
 
                 <!-- Canvas -->
@@ -69,15 +76,10 @@
                     <canvas id="graph" width="400" height="400"></canvas>
                 </h:panelGroup>
 
-                <!-- Скрытые поля для JS -->
-                <h:inputHidden id="hiddenX" value="#{areaBean.x}"/>
-                <h:inputHidden id="hiddenY" value="#{areaBean.y}"/>
-                <h:inputHidden id="hiddenR" value="#{areaBean.rForClick}"/>
-
-                <!-- Команда для вызова из JS -->
+                <!-- RemoteCommand -->
                 <p:remoteCommand name="submitFromCanvas"
                                  actionListener="#{areaBean.checkPoint}"
-                                 update="resultsTable canvasPanel"/>
+                                 update=":mainForm:resultsTable :mainForm:canvasPanel"/>
             </h:panelGroup>
 
             <!-- Правая колонка -->
@@ -86,9 +88,7 @@
 
                 <h:panelGrid columns="2">
                     <h:outputText value="Локальное время:"/>
-                    <h:outputText value="#{areaBean.localTime}">
-                        <f:convertDateTime pattern="HH:mm:ss" timeZone="Europe/Moscow"/>
-                    </h:outputText>
+                    <h:outputText value="#{areaBean.formattedLocalTime}"/>
 
                     <h:outputText value="Последняя ошибка:"/>
                     <h:outputText value="#{areaBean.errorMessage != null ? areaBean.errorMessage : 'нет'}"/>
@@ -99,9 +99,9 @@
                              value="#{resultsBean.results}"
                              var="res"
                              style="margin-top:20px; width:100%;">
-                    <p:column headerText="X"><h:outputText value="#{res.x}"/></p:column>
-                    <p:column headerText="Y"><h:outputText value="#{res.y}"/></p:column>
-                    <p:column headerText="R"><h:outputText value="#{res.r}"/></p:column>
+                    <p:column headerText="X"><h:outputText value="#{res.point.x}"/></p:column>
+                    <p:column headerText="Y"><h:outputText value="#{res.point.y}"/></p:column>
+                    <p:column headerText="R"><h:outputText value="#{res.point.r}"/></p:column>
                     <p:column headerText="Попадание"><h:outputText value="#{res.hit ? 'Да' : 'Нет'}"/></p:column>
                     <p:column headerText="Время сервера"><h:outputText value="#{res.formattedServerTime}"/></p:column>
                     <p:column headerText="Время выполнения (мс)"><h:outputText value="#{res.execTime}"/></p:column>
@@ -109,7 +109,7 @@
 
                 <p:commandButton value="Сбросить историю"
                                  actionListener="#{resultsBean.reset}"
-                                 update="resultsTable"
+                                 update=":mainForm:resultsTable"
                                  style="margin-top:10px"/>
 
                 <br/>
