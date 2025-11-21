@@ -1,170 +1,169 @@
-// ----------------- Глобальные переменные -----------------
+// ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
 let canvas, ctx;
-const size = 400;
-const center = size / 2;
-const scale = 40;
-
-// Хранилище точек [{x,y,r,hit}]
+const SIZE = 400;
+const CENTER = SIZE / 2;
+const SCALE = 32;
 let points = [];
 
-// ----------------- ИНИЦИАЛИЗАЦИЯ CANVAS -----------------
-function initGraph() {
-    canvas = document.getElementById("graph");
-    if (!canvas) return;
+// ==================== КОНВЕРТАЦИЯ КООРДИНАТ ====================
+const toCanvasX = x => CENTER + x * SCALE;
+const toCanvasY = y => CENTER - y * SCALE;
 
-    canvas.width = size;
-    canvas.height = size;
-
-    ctx = canvas.getContext("2d");
-
-    // Повторно вешаем обработчик клика (после AJAX обновления он теряется)
-    canvas.onclick = handleCanvasClick;
-
-    // Повторно вешаем обработчики на R
-    attachRListeners();
-
-    drawScene();
-}
-
-// ----------------- Получаем выбранные R -----------------
+// ==================== ГЛАВНАЯ ФУНКЦИЯ — ЧТО ВЫБРАНО ПО R ====================
 function getSelectedRs() {
-    const rPanel = document.getElementById("rPanel");
-    if (!rPanel) return [];
+    console.log("→ Ищем R по всему документу...");
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    const result = [];
 
-    return Array.from(rPanel.querySelectorAll("input[type='checkbox']:checked"))
-        .map(cb => parseFloat(cb.value))
-        .filter(v => !isNaN(v));
+    checked.forEach(cb => {
+        if (["1","2","3","4","5"].includes(cb.value)) {
+            result.push(parseFloat(cb.value));
+        }
+    });
+
+    console.log("Найдено R:", result);
+    return result;
 }
 
-// ----------------- Преобразование координат -----------------
-function toCanvasX(x) { return center + x * scale; }
-function toCanvasY(y) { return center - y * scale; }
 
-// ----------------- Рисуем фигуры -----------------
+// ==================== РИСОВАНИЕ ФИГУР ====================
 function drawShapes() {
-    const rValues = getSelectedRs().sort((a, b) => a - b);
-    if (!rValues.length) return;
+    console.log("→ drawShapes() началась");
+    const rs = getSelectedRs();
 
-    rValues.forEach(R => {
-        ctx.fillStyle = "rgba(0, 128, 255, 0.3)";
+    if (rs.length === 0) {
+        return;
+    }
 
-        // 2-я четверть — сектор круга
+    rs.forEach(R => {
+        ctx.fillStyle = "rgba(0, 128, 255, 0.35)";
+
+        // 2-я четверть — четверть круга
         ctx.beginPath();
-        ctx.moveTo(center, center);
-        ctx.arc(center, center, R * scale / 2, Math.PI, 1.5 * Math.PI);
+        ctx.arc(CENTER, CENTER, R * SCALE/2, Math.PI, 1.5 * Math.PI, false);
+        ctx.lineTo(CENTER, CENTER);
         ctx.closePath();
         ctx.fill();
 
         // 3-я четверть — прямоугольник
         ctx.beginPath();
-        ctx.rect(center - R * scale, center, R * scale, (R * scale) / 2);
+        ctx.rect(CENTER - R * SCALE, CENTER, R * SCALE, R * SCALE / 2);
         ctx.fill();
 
         // 4-я четверть — треугольник
         ctx.beginPath();
-        ctx.moveTo(center, center);
-        ctx.lineTo(center + (R * scale) / 2, center);
-        ctx.lineTo(center, center + (R * scale) / 2);
+        ctx.moveTo(CENTER, CENTER);
+        ctx.lineTo(CENTER + (R * SCALE)/2, CENTER);
+        ctx.lineTo(CENTER, CENTER + (R * SCALE)/2);
         ctx.closePath();
         ctx.fill();
     });
+    console.log("drawShapes() закончена");
 }
 
-// ----------------- Оси -----------------
+// ==================== ОСИ И ПОДПИСИ ====================
 function drawAxes() {
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = "#000";
     ctx.lineWidth = 2;
-
-    // Ось X
-    ctx.beginPath();
-    ctx.moveTo(0, center);
-    ctx.lineTo(size, center);
-    ctx.stroke();
-
-    // Ось Y
-    ctx.beginPath();
-    ctx.moveTo(center, 0);
-    ctx.lineTo(center, size);
-    ctx.stroke();
-
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "#000";
     ctx.font = "12px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
+    ctx.beginPath();
+    ctx.moveTo(0, CENTER); ctx.lineTo(SIZE, CENTER);
+    ctx.moveTo(CENTER, 0); ctx.lineTo(CENTER, SIZE);
+    ctx.stroke();
+
     for (let i = -5; i <= 5; i++) {
         if (i === 0) continue;
-
-        // X
-        ctx.beginPath();
-        ctx.moveTo(center + i * scale, center - 5);
-        ctx.lineTo(center + i * scale, center + 5);
-        ctx.stroke();
-        ctx.fillText(i, center + i * scale, center + 15);
-
-        // Y
-        ctx.beginPath();
-        ctx.moveTo(center - 5, center - i * scale);
-        ctx.lineTo(center + 5, center - i * scale);
-        ctx.stroke();
-        ctx.fillText(i, center - 15, center - i * scale);
+        const p = CENTER + i * SCALE;
+        ctx.fillText(i, p, CENTER + 18);
+        ctx.fillText(i, CENTER - 20, p);
     }
 }
 
-// ----------------- Рисуем точки -----------------
+// ==================== ТОЧКИ ====================
 function drawPoints() {
     points.forEach(p => {
+        ctx.fillStyle = p.hit ? "#00ff00" : "#ff0000";
         ctx.beginPath();
-        ctx.fillStyle = p.hit ? "green" : "red";
-        ctx.arc(toCanvasX(p.x), toCanvasY(p.y), 4, 0, Math.PI * 2);
+        ctx.arc(toCanvasX(p.x), toCanvasY(p.y), 6, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
     });
 }
 
-// ----------------- Полная сцена -----------------
+// ==================== ПОЛНАЯ ПЕРЕРИСОВКА ====================
 function drawScene() {
-    ctx.clearRect(0, 0, size, size);
+    console.log("→→→ drawScene() вызвана");
+    if (!ctx) {
+        console.error("ctx нет — canvas не инициализирован!");
+        return;
+    }
+    ctx.clearRect(0, 0, SIZE, SIZE);
     drawShapes();
     drawAxes();
     drawPoints();
+    console.log("drawScene() завершена ←←←");
 }
 
-// ----------------- Клик по canvas -----------------
-function handleCanvasClick(e) {
-    const rect = canvas.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) - center) / scale;
-    const y = (center - (e.clientY - rect.top)) / scale;
-
-    const rValues = getSelectedRs();
-    if (!rValues.length) {
-        alert("Выберите хотя бы один R!");
-        return;
-    }
-
-    const R = rValues[0];
-
-    document.getElementById("mainForm:hiddenX").value = x.toFixed(4);
-    document.getElementById("mainForm:hiddenY").value = y.toFixed(4);
-    document.getElementById("mainForm:hiddenR").value = R;
-
-    if (typeof submitFromCanvas === "function") submitFromCanvas();
-}
-
-// ----------------- Добавление точки из сервера -----------------
+// ==================== ДОБАВЛЕНИЕ ТОЧКИ С СЕРВЕРА ====================
 function addPointFromServer(x, y, r, hit) {
-    points.push({ x, y, r, hit });
+    console.log("addPointFromServer:", x, y, r, hit);
+    points.push({ x: +x, y: +y, r: +r, hit: hit === true || hit === "true" });
     drawScene();
 }
 
-// ----------------- Подключение обработчиков к R -----------------
-function attachRListeners() {
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Страница загрузилась — инициализируем график");
+
+    canvas = document.getElementById("graph");
+    if (!canvas) {
+        console.error("Canvas не найден!");
+        return;
+    }
+    ctx = canvas.getContext("2d");
+    console.log("Canvas и ctx готовы");
+
+    // Клик по графику
+    canvas.onclick = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left - CENTER) / SCALE;
+        const y = (CENTER - (e.clientY - rect.top)) / SCALE;
+        const rs = getSelectedRs();
+        if (rs.length === 0) {
+            alert("Выбери R сначала!");
+            return;
+        }
+
+        const hx = document.getElementById("mainForm:hiddenX");
+        const hy = document.getElementById("mainForm:hiddenY");
+        const hr = document.getElementById("mainForm:hiddenR");
+        if (hx && hy && hr) {
+            hx.value = x.toFixed(6);
+            hy.value = y.toFixed(6);
+            hr.value = rs[0];
+            submitFromCanvas();
+        }
+    };
+
     const rPanel = document.getElementById("rPanel");
-    if (!rPanel) return;
+    if (rPanel) {
+        rPanel.addEventListener("change", (e) => {
+            if (e.target.type === "checkbox") {
+                console.log("R изменён — перерисовываем");
+                drawScene();
+            }
+        });
+    }
 
-    rPanel.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        cb.onchange = drawScene;
-    });
-}
+    drawScene(); // первый кадр
+});
 
-// ----------------- Инициализация при загрузке страницы -----------------
-document.addEventListener("DOMContentLoaded", initGraph);
+// Глобальные функции для PrimeFaces
+window.drawScene = drawScene;
+window.addPointFromServer = addPointFromServer;
