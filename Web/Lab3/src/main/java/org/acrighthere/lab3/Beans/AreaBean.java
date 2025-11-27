@@ -24,6 +24,9 @@ public class AreaBean implements Serializable {
   private Double y;
   private List<Number> selectedR = new ArrayList<>();
 
+  private Double graphX;
+  private Double graphY;
+
   private String errorMessage;
   private LocalDateTime localTime = LocalDateTime.now();
 
@@ -62,6 +65,38 @@ public class AreaBean implements Serializable {
       e.printStackTrace();
       errorMessage = "Ошибка: " + e.getMessage();
     }
+  }
+
+  public void checkPointFromGraph() {
+    if (graphX == null || graphY == null || selectedR.isEmpty()) {
+      return;
+    }
+
+    double x = graphX;
+    double y = graphY;
+
+    for (Number rNum : selectedR) {
+      double r = rNum.doubleValue();
+      Point point = new Point(x, y, r);
+      long start = System.nanoTime();
+      boolean hit = AreaChecker.checkHit(point);
+      long execTime = (System.nanoTime() - start) / 1_000_000;
+
+      HitResult result = new HitResult();
+      result.setPoint(point);
+      result.setHit(hit);
+      result.setAtTime(LocalDateTime.now());
+      result.setExecTime(execTime);
+
+      hitResultDAO.save(result);
+      resultsBean.addResult(result);
+
+      PrimeFaces.current()
+          .executeScript("addPointFromServer(" + x + ", " + y + ", " + r + ", " + hit + ");");
+    }
+
+    graphX = null;
+    graphY = null;
   }
 
   public String getFormattedLocalTime() {

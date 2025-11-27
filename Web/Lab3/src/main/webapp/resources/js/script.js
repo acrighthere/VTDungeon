@@ -11,36 +11,27 @@ const toCanvasY = y => CENTER - y * SCALE;
 
 // ==================== ГЛАВНАЯ ФУНКЦИЯ — ЧТО ВЫБРАНО ПО R ====================
 function getSelectedRs() {
-    console.log("→ Ищем R по всему документу...");
-    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    const checked = document.querySelectorAll('input[name="mainForm:rCheckbox"]:checked');
     const result = [];
-
     checked.forEach(cb => {
         if (["1","2","3","4","5"].includes(cb.value)) {
             result.push(parseFloat(cb.value));
         }
     });
-
-    console.log("Найдено R:", result);
     return result;
 }
 
-
 // ==================== РИСОВАНИЕ ФИГУР ====================
 function drawShapes() {
-    console.log("→ drawShapes() началась");
     const rs = getSelectedRs();
-
-    if (rs.length === 0) {
-        return;
-    }
+    if (rs.length === 0) return;
 
     rs.forEach(R => {
         ctx.fillStyle = "rgba(0, 128, 255, 0.35)";
 
-        // 2-я четверть — четверть круга
+        // 2-я четверть — четверть круга радиусом R/2
         ctx.beginPath();
-        ctx.arc(CENTER, CENTER, R * SCALE/2, Math.PI, 1.5 * Math.PI, false);
+        ctx.arc(CENTER, CENTER, R * SCALE / 2, Math.PI, 1.5 * Math.PI, false);
         ctx.lineTo(CENTER, CENTER);
         ctx.closePath();
         ctx.fill();
@@ -53,12 +44,11 @@ function drawShapes() {
         // 4-я четверть — треугольник
         ctx.beginPath();
         ctx.moveTo(CENTER, CENTER);
-        ctx.lineTo(CENTER + (R * SCALE)/2, CENTER);
-        ctx.lineTo(CENTER, CENTER + (R * SCALE)/2);
+        ctx.lineTo(CENTER + (R * SCALE) / 2, CENTER);
+        ctx.lineTo(CENTER, CENTER + (R * SCALE) / 2);
         ctx.closePath();
         ctx.fill();
     });
-    console.log("drawShapes() закончена");
 }
 
 // ==================== ОСИ И ПОДПИСИ ====================
@@ -79,7 +69,8 @@ function drawAxes() {
         if (i === 0) continue;
         const p = CENTER + i * SCALE;
         ctx.fillText(i, p, CENTER + 18);
-        ctx.fillText(i, CENTER - 20, p);
+        const py = CENTER - i * SCALE;
+        ctx.fillText(i, CENTER - 20, py);
     }
 }
 
@@ -98,72 +89,68 @@ function drawPoints() {
 
 // ==================== ПОЛНАЯ ПЕРЕРИСОВКА ====================
 function drawScene() {
-    console.log("→→→ drawScene() вызвана");
-    if (!ctx) {
-        console.error("ctx нет — canvas не инициализирован!");
-        return;
-    }
+    if (!ctx) return;
     ctx.clearRect(0, 0, SIZE, SIZE);
     drawShapes();
     drawAxes();
     drawPoints();
-    console.log("drawScene() завершена ←←←");
 }
 
 // ==================== ДОБАВЛЕНИЕ ТОЧКИ С СЕРВЕРА ====================
 function addPointFromServer(x, y, r, hit) {
-    console.log("addPointFromServer:", x, y, r, hit);
     points.push({ x: +x, y: +y, r: +r, hit: hit === true || hit === "true" });
     drawScene();
 }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("Страница загрузилась — инициализируем график");
-
-    canvas = document.getElementById("graph");
-    if (!canvas) {
-        console.error("Canvas не найден!");
+// ==================== ОТПРАВКА ТОЧКИ С КАНВАСА ====================
+function sendPointFromGraph() {
+    const selected = getSelectedRs();
+    if (selected.length === 0) {
+        alert("Выбери хотя бы одно R!");
         return;
     }
+    submitFromCanvas(); // да, вызов самого remoteCommand по имени
+}
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+document.addEventListener("DOMContentLoaded", () => {
+    canvas = document.getElementById("graph");
+    if (!canvas) return;
+
     ctx = canvas.getContext("2d");
-    console.log("Canvas и ctx готовы");
 
-    // Клик по графику
     canvas.onclick = function(e) {
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left - CENTER) / SCALE;
-        const y = (CENTER - (e.clientY - rect.top)) / SCALE;
-        const rs = getSelectedRs();
-        if (rs.length === 0) {
-            alert("Выбери R сначала!");
-            return;
-        }
+        e.preventDefault();
+        e.stopPropagation();
 
-        const hx = document.getElementById("mainForm:hiddenX");
-        const hy = document.getElementById("mainForm:hiddenY");
-        const hr = document.getElementById("mainForm:hiddenR");
-        if (hx && hy && hr) {
-            hx.value = x.toFixed(6);
-            hy.value = y.toFixed(6);
-            hr.value = rs[0];
-            submitFromCanvas();
-        }
+        const rect = canvas.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) - CENTER) / SCALE;
+        const y = (CENTER - (e.clientY - rect.top)) / SCALE;
+
+        document.getElementById('mainForm:hiddenX').value = x.toFixed(8);
+        document.getElementById('mainForm:hiddenY').value = y.toFixed(8);
+
+        sendPointFromGraph();
     };
 
+    // Перерисовка при смене R
     const rPanel = document.getElementById("rPanel");
     if (rPanel) {
-        rPanel.addEventListener("change", (e) => {
-            if (e.target.type === "checkbox") {
-                console.log("R изменён — перерисовываем");
-                drawScene();
-            }
+        rPanel.addEventListener("change", drawScene);
+    }
+
+    // Кнопка очистки истории точек
+    const resetBtn = document.getElementById("mainForm:j_idt51");
+    if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+            points = [];
+            drawScene();
         });
     }
 
-    drawScene(); // первый кадр
+    drawScene();
 });
 
-// Глобальные функции для PrimeFaces
+// Глобальные функции
 window.drawScene = drawScene;
 window.addPointFromServer = addPointFromServer;
