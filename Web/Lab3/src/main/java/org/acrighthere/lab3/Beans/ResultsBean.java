@@ -1,6 +1,6 @@
 package org.acrighthere.lab3.Beans;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.acrighthere.lab3.Model.HitResult;
 
 @Data
 @Named("resultsBean")
-@SessionScoped
+@ApplicationScoped
 public class ResultsBean implements Serializable {
 
   private final List<HitResult> results = new ArrayList<>();
