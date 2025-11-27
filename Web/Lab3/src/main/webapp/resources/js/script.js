@@ -127,9 +127,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const x = ((e.clientX - rect.left) - CENTER) / SCALE;
         const y = (CENTER - (e.clientY - rect.top)) / SCALE;
 
-        document.getElementById('mainForm:hiddenX').value = x.toFixed(8);
-        document.getElementById('mainForm:hiddenY').value = y.toFixed(8);
-
+        document.getElementById('mainForm:hiddenX').value = x.toFixed(2);
+        document.getElementById('mainForm:hiddenY').value = y.toFixed(2);
+        if (x < -5 || x > 5) {
+            alert(`X должен быть от -5 до 5!\nТы кликнул: X = ${x.toFixed(2)}`);
+            return;
+        }
+        if (y < -3 || y > 5) {
+            alert(`Y должен быть от -3 до 5!\nТы кликнул: Y = ${y.toFixed(2)}`);
+            return;
+        }
         sendPointFromGraph();
     };
 
@@ -139,18 +146,13 @@ document.addEventListener("DOMContentLoaded", () => {
         rPanel.addEventListener("change", drawScene);
     }
 
-    // Кнопка очистки истории точек
-    const resetBtn = document.getElementById("mainForm:j_idt51");
-    if (resetBtn) {
-        resetBtn.addEventListener("click", () => {
-            points = [];
-            drawScene();
-        });
-    }
-
     drawScene();
 });
 
 // Глобальные функции
 window.drawScene = drawScene;
 window.addPointFromServer = addPointFromServer;
+window.clearGraphPoints = function() {
+    points.length = 0;  // быстрее, чем points = []
+    drawScene();
+};

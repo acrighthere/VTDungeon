@@ -92,6 +92,14 @@
                     <h:outputText value="#{areaBean.errorMessage != null ? areaBean.errorMessage : 'нет'}"/>
                 </h:panelGrid>
 
+                <p:commandButton id="clearHistoryBtn"
+                                 value="Сбросить историю"
+                                 action="#{resultsBean.reset}"
+                                 process="@this"
+                                 update=":mainForm:resultsTable"
+                                 oncomplete="clearGraphPoints()"
+                                 style="margin-top:10px"/>
+
                 <!-- Таблица -->
                 <p:dataTable id="resultsTable"
                              value="#{resultsBean.results}"
@@ -105,10 +113,7 @@
                     <p:column headerText="Время выполнения (мс)"><h:outputText value="#{res.execTime}"/></p:column>
                 </p:dataTable>
 
-                <p:commandButton value="Сбросить историю"
-                                 actionListener="#{resultsBean.reset}"
-                                 update=":mainForm:resultsTable"
-                                 style="margin-top:10px"/>
+
 
                 <br/>
                 <h:link outcome="index" value="Вернуться на стартовую страницу"
