@@ -44,9 +44,18 @@
                 <!-- Y -->
                 <h:panelGrid columns="2">
                     <h:outputLabel for="yInput" value="Y:"/>
-                    <p:inputText id="yInput" value="#{areaBean.y}" required="true">
-                        <f:validateDoubleRange minimum="-3" maximum="5"/>
-                    </p:inputText>
+                    <p:inputNumber id="yInput"
+                                   value="#{areaBean.y}"
+                                   required="true"
+                                   requiredMessage="Введите Y!"
+                                   decimalPlaces="2"
+                                   minValue="-3"
+                                   maxValue="5"
+                                   placeholder="-3..5"
+                                   style="width:100px">
+                        <p:ajax event="change"/>
+                    </p:inputNumber>
+                    <p:message for="yInput" display="icon"/>
                 </h:panelGrid>
 
                 <!-- R -->
@@ -70,6 +79,7 @@
                 <p:commandButton id="checkBtn" value="Проверить"
                                  actionListener="#{areaBean.checkPoint}"
                                  update=":mainForm:resultsTable"
+                                 validateClient="true"
                                  style="margin-top:10px"/>
 
                 <!-- Canvas -->
