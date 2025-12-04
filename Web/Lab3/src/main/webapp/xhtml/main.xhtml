@@ -104,14 +104,21 @@
                 <p:dataTable id="resultsTable"
                              value="#{resultsBean.results}"
                              var="res"
-                             style="margin-top:20px; width:100%;">
-                    <p:column headerText="X"><h:outputText value="#{res.point.x}"/></p:column>
-                    <p:column headerText="Y"><h:outputText value="#{res.point.y}"/></p:column>
-                    <p:column headerText="R"><h:outputText value="#{res.point.r}"/></p:column>
-                    <p:column headerText="Попадание"><h:outputText value="#{res.hit ? 'Да' : 'Нет'}"/></p:column>
-                    <p:column headerText="Время сервера"><h:outputText value="#{res.formattedServerTime}"/></p:column>
-                    <p:column headerText="Время выполнения (мс)"><h:outputText value="#{res.execTime}"/></p:column>
-                </p:dataTable>
+                             style="width:100%;"
+                             paginator="true"
+                             rows="10"
+                             rowsPerPageTemplate="5,10,20,50"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+                             currentPageReportTemplate="({currentPage} из {totalPages}, всего {totalRecords} записей)">
+
+                <p:column headerText="X"><h:outputText value="#{res.point.x}"/></p:column>
+                <p:column headerText="Y"><h:outputText value="#{res.point.y}"/></p:column>
+                <p:column headerText="R"><h:outputText value="#{res.point.r}"/></p:column>
+                <p:column headerText="Попадание"><h:outputText value="#{res.hit ? 'Да' : 'Нет'}"/></p:column>
+                <p:column headerText="Время сервера"><h:outputText value="#{res.formattedServerTime}"/></p:column>
+                <p:column headerText="Время выполнения (мс)"><h:outputText value="#{res.execTime}"/></p:column>
+            </p:dataTable>
 
 
 
