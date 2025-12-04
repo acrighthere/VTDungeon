@@ -45,13 +45,16 @@ public class AreaBean implements Serializable {
         Point point = new Point(x, y, r);
         long start = System.nanoTime();
         boolean hit = AreaChecker.checkHit(point);
-        long execTime = (System.nanoTime() - start) / 1_000_000;
+        long execTime = System.nanoTime() - start;
+
+        double execTimeMs = execTime / 1_000_000.0;
+        execTimeMs = Math.round(execTimeMs * 100.0) / 100.0;
 
         HitResult result = new HitResult();
         result.setPoint(point);
         result.setHit(hit);
         result.setAtTime(LocalDateTime.now());
-        result.setExecTime(execTime);
+        result.setExecTime(execTimeMs);
         hitResultDAO.save(result);
         resultsBean.addResult(result);
 
@@ -80,13 +83,16 @@ public class AreaBean implements Serializable {
       Point point = new Point(x, y, r);
       long start = System.nanoTime();
       boolean hit = AreaChecker.checkHit(point);
-      long execTime = (System.nanoTime() - start) / 1_000_000;
+      long execTime = System.nanoTime() - start;
+
+      double execTimeMs = execTime / 1_000_000.0;
+      execTimeMs = Math.round(execTimeMs * 100.0) / 100.0;
 
       HitResult result = new HitResult();
       result.setPoint(point);
       result.setHit(hit);
       result.setAtTime(LocalDateTime.now());
-      result.setExecTime(execTime);
+      result.setExecTime(execTimeMs);
 
       hitResultDAO.save(result);
       resultsBean.addResult(result);

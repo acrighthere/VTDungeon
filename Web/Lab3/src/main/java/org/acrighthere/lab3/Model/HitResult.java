@@ -15,7 +15,7 @@ public class HitResult {
   @Embedded private Point point;
   private boolean hit;
   private LocalDateTime atTime;
-  @Transient private long execTime;
+  @Transient private double execTime;
 
   public String getFormattedServerTime() {
     return atTime != null ? atTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : "";
