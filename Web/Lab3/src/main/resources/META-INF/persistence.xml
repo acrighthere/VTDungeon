@@ -2,7 +2,7 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
-             version="3.0">
+             version="3.2">
 
     <persistence-unit name="Lab3PU" transaction-type="RESOURCE_LOCAL">
         <!-- Сущности -->
@@ -13,9 +13,9 @@
         <properties>
             <!-- JDBC настройки -->
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://pg:5432/studs"/>
-            <property name="jakarta.persistence.jdbc.user" value="s467244"/>
-            <property name="jakarta.persistence.jdbc.password" value="funFr7fGc2a6H2O6"/>
+            <property name="jakarta.persistence.jdbc.url" value="${db.url}"/>
+            <property name="jakarta.persistence.jdbc.user" value="${db.user}"/>
+            <property name="jakarta.persistence.jdbc.password" value="${env.pass}"/>
 
             <!-- Hibernate свойства -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

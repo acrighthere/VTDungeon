@@ -26,7 +26,8 @@
         <p:remoteCommand name="submitFromCanvas"
                          actionListener="#{areaBean.checkPointFromGraph}"
                          update="resultsTable"
-                         process="hiddenX hiddenY rCheckbox @this" />
+                         process="hiddenX hiddenY rCheckbox @this"
+                         oncomplete="drawScene()"/>
 
         <h:panelGrid columns="2" columnClasses="left-col,right-col" styleClass="layout">
 
@@ -80,7 +81,8 @@
                                  actionListener="#{areaBean.checkPoint}"
                                  update=":mainForm:resultsTable"
                                  validateClient="true"
-                                 style="margin-top:10px"/>
+                                 style="margin-top:10px"
+                                 oncomplete="drawScene()"/>
 
                 <!-- Canvas -->
                 <div style="margin-top:20px; padding:10px; background:#fff; border-radius:8px;">

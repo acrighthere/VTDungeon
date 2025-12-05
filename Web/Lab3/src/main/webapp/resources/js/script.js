@@ -90,16 +90,33 @@ function drawPoints() {
 // ==================== ПОЛНАЯ ПЕРЕРИСОВКА ====================
 function drawScene() {
     if (!ctx) return;
+
+    syncPointsFromTable();  // ← вот это главное!
+
     ctx.clearRect(0, 0, SIZE, SIZE);
     drawShapes();
     drawAxes();
     drawPoints();
 }
 
-// ==================== ДОБАВЛЕНИЕ ТОЧКИ С СЕРВЕРА ====================
-function addPointFromServer(x, y, r, hit) {
-    points.push({ x: +x, y: +y, r: +r, hit: hit === true || hit === "true" });
-    drawScene();
+function syncPointsFromTable() {
+    points = []; // очищаем старое
+
+    const rows = document.querySelectorAll('#mainForm\\:resultsTable tbody.ui-datatable-data tr');
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 4) {
+            const x = parseFloat(cells[0].textContent.trim());
+            const y = parseFloat(cells[1].textContent.trim());
+            const r = parseFloat(cells[2].textContent.trim());
+            const hitText = cells[3].textContent.trim();
+            const hit = hitText === 'Да';
+
+            if (!isNaN(x) && !isNaN(y) && !isNaN(r)) {
+                points.push({ x, y, r, hit });
+            }
+        }
+    });
 }
 
 // ==================== ОТПРАВКА ТОЧКИ С КАНВАСА ====================
@@ -109,7 +126,7 @@ function sendPointFromGraph() {
         alert("Выбери хотя бы одно R!");
         return;
     }
-    submitFromCanvas(); // да, вызов самого remoteCommand по имени
+    submitFromCanvas();
 }
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -138,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         sendPointFromGraph();
+        drawScene();
     };
 
     // Перерисовка при смене R
@@ -151,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Глобальные функции
 window.drawScene = drawScene;
-window.addPointFromServer = addPointFromServer;
 window.clearGraphPoints = function() {
     points.length = 0;  // быстрее, чем points = []
     drawScene();
