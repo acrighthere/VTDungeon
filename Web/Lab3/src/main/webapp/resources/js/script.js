@@ -91,7 +91,7 @@ function drawPoints() {
 function drawScene() {
     if (!ctx) return;
 
-    syncPointsFromTable();  // ← вот это главное!
+    syncPointsFromTable();
 
     ctx.clearRect(0, 0, SIZE, SIZE);
     drawShapes();

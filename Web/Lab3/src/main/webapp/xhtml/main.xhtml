@@ -22,6 +22,7 @@
 
         <h:inputHidden id="hiddenX" value="#{areaBean.graphX}" />
         <h:inputHidden id="hiddenY" value="#{areaBean.graphY}" />
+        <h:inputHidden id="pointsJson" value="#{resultsBean.resultsJson}" />
 
         <p:remoteCommand name="submitFromCanvas"
                          actionListener="#{areaBean.checkPointFromGraph}"
@@ -124,7 +125,7 @@
                              paginatorPosition="bottom"
                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
                              currentPageReportTemplate="({currentPage} из {totalPages}, всего {totalRecords} записей)">
-
+                    <p:ajax event="page" oncomplete="drawScene()"/>
                 <p:column headerText="X"><h:outputText value="#{res.point.x}"/></p:column>
                 <p:column headerText="Y"><h:outputText value="#{res.point.y}"/></p:column>
                 <p:column headerText="R"><h:outputText value="#{res.point.r}"/></p:column>
