@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/datasources"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.jboss.org/ironjacamar/datasources
+             http://www.jboss.org/ironjacamar/datasources.xsd">
+
+    <datasource jndi-name="java:/PostgresDS" pool-name="PostgresDS" enabled="true" use-java-context="true">
+        <connection-url>jdbc:postgresql://pg:5432/studs</connection-url>
+        <driver>Lab3.war_org.postgresql.Driver_42_7</driver>
+        <security>
+            <user-name>s467244</user-name>
+            <password>funFr7fGc2a6H2O6</password>
+        </security>
+        <validation>
+            <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
+            <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"/>
+            <validate-on-match>true</validate-on-match>
+        </validation>
+        <pool>
+            <min-pool-size>2</min-pool-size>
+            <max-pool-size>10</max-pool-size>
+        </pool>
+    </datasource>
+
+</datasources>

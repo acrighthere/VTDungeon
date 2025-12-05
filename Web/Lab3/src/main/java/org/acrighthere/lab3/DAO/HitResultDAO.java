@@ -14,7 +14,7 @@ public class HitResultDAO {
   @PersistenceContext(unitName = "Lab3PU")
   private EntityManager em;
 
-  @Transactional
+  @Transactional // теперь работает!
   public void save(HitResult hitResult) {
     em.persist(hitResult);
   }
