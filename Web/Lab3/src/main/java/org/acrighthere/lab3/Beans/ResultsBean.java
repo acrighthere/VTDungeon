@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import lombok.Data;
 import org.acrighthere.lab3.Model.HitResult;
-import org.primefaces.PrimeFaces;
 
 @Data
 @Named("resultsBean")
@@ -23,7 +22,6 @@ public class ResultsBean implements Serializable {
 
   public void reset() {
     results.clear();
-    PrimeFaces.current().executeScript("clearGraphPoints();");
   }
 
   public List<HitResult> getResults() {

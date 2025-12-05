@@ -114,6 +114,7 @@
                 <p:dataTable id="resultsTable"
                              value="#{resultsBean.results}"
                              var="res"
+                             oncomplete="drawScene()"
                              style="width:100%;"
                              paginator="true"
                              rows="10"

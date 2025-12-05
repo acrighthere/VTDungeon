@@ -13,7 +13,6 @@ import org.acrighthere.lab3.DAO.HitResultDAO;
 import org.acrighthere.lab3.Model.HitResult;
 import org.acrighthere.lab3.Model.Point;
 import org.acrighthere.lab3.Util.AreaChecker;
-import org.primefaces.PrimeFaces;
 
 @Data
 @Named("areaBean")
@@ -34,40 +33,13 @@ public class AreaBean implements Serializable {
   @Inject private ResultsBean resultsBean;
 
   public void checkPoint() {
-    try {
-      if (x == null || y == null || selectedR.isEmpty()) {
-        errorMessage = "Заполните все поля.";
-        return;
-      }
-
-      for (Number rNum : selectedR) {
-        double r = rNum.doubleValue();
-        Point point = new Point(x, y, r);
-        long start = System.nanoTime();
-        boolean hit = AreaChecker.checkHit(point);
-        long execTime = System.nanoTime() - start;
-
-        double execTimeMs = execTime / 1_000_000.0;
-        execTimeMs = Math.round(execTimeMs * 100.0) / 100.0;
-
-        HitResult result = new HitResult();
-        result.setPoint(point);
-        result.setHit(hit);
-        result.setAtTime(LocalDateTime.now());
-        result.setExecTime(execTimeMs);
-        hitResultDAO.save(result);
-        resultsBean.addResult(result);
-
-        PrimeFaces.current()
-            .executeScript("addPointFromServer(" + x + "," + y + "," + r + "," + hit + ");");
-      }
-
-      errorMessage = null;
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      errorMessage = "Ошибка: " + e.getMessage();
+    if (x == null || y == null || selectedR.isEmpty()) {
+      errorMessage = "Заполните все поля.";
+      return;
     }
+
+    processPoints(x, y);
+    errorMessage = null;
   }
 
   public void checkPointFromGraph() {
@@ -75,18 +47,24 @@ public class AreaBean implements Serializable {
       return;
     }
 
-    double x = graphX;
-    double y = graphY;
+    processPoints(graphX, graphY);
 
+    graphX = null;
+    graphY = null;
+  }
+
+  // === Общий метод — вся логика здесь! ===
+  private void processPoints(double x, double y) {
     for (Number rNum : selectedR) {
       double r = rNum.doubleValue();
+
       Point point = new Point(x, y, r);
+
       long start = System.nanoTime();
       boolean hit = AreaChecker.checkHit(point);
       long execTime = System.nanoTime() - start;
 
-      double execTimeMs = execTime / 1_000_000.0;
-      execTimeMs = Math.round(execTimeMs * 100.0) / 100.0;
+      double execTimeMs = Math.round((execTime / 1_000_000.0) * 100.0) / 100.0;
 
       HitResult result = new HitResult();
       result.setPoint(point);
@@ -96,16 +74,10 @@ public class AreaBean implements Serializable {
 
       hitResultDAO.save(result);
       resultsBean.addResult(result);
-
-      PrimeFaces.current()
-          .executeScript("addPointFromServer(" + x + ", " + y + ", " + r + ", " + hit + ");");
     }
-
-    graphX = null;
-    graphY = null;
   }
 
   public String getFormattedLocalTime() {
-    return localTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+    return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
   }
 }
