@@ -1,4 +1,4 @@
-package org.acrighthere.lab4.controller;
+package org.acrighthere.lab4.backend.controller;
 
 import org.acrighthere.lab4.backend.model.User;
 import org.acrighthere.lab4.backend.service.AuthService;
