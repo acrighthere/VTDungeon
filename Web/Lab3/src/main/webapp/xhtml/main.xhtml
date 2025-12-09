@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Основная страница — проверка точки</title>
+    <h:outputStylesheet library="css" name="index.css"/>
+    <h:outputScript library="js" name="script.js" target="body"/>
+</h:head>
+
+<h:body>
+
+    <!-- Шапка -->
+    <div class="header">
+        <h2 id="student-name">Родионов Максим Артемович</h2>
+        <h3>Группа: P3231 • Вариант: 3244</h3>
+    </div>
+
+    <h:form id="mainForm">
+
+        <h:inputHidden id="hiddenX" value="#{areaBean.graphX}" />
+        <h:inputHidden id="hiddenY" value="#{areaBean.graphY}" />
+        <h:inputHidden id="pointsJson" value="#{resultsBean.resultsJson}" />
+
+        <p:remoteCommand name="submitFromCanvas"
+                         actionListener="#{areaBean.checkPointFromGraph}"
+                         update="resultsTable"
+                         process="hiddenX hiddenY rCheckbox @this"
+                         oncomplete="drawScene()"/>
+
+        <h:panelGrid columns="2" columnClasses="left-col,right-col" styleClass="layout">
+
+            <!-- Левая колонка -->
+            <h:panelGroup layout="block">
+                <h3>Параметры</h3>
+
+                <!-- X -->
+                <h:panelGrid columns="2">
+                    <h:outputLabel for="xSpinner" value="X:"/>
+                    <p:spinner id="xSpinner" value="#{areaBean.x}" min="-5" max="5" step="1"
+                               required="true" style="width:80px" readonlyInput="true"/>
+                </h:panelGrid>
+
+                <!-- Y -->
+                <h:panelGrid columns="2">
+                    <h:outputLabel for="yInput" value="Y:"/>
+                    <p:inputNumber id="yInput"
+                                   value="#{areaBean.y}"
+                                   required="true"
+                                   requiredMessage="Введите Y!"
+                                   decimalPlaces="2"
+                                   minValue="-3"
+                                   maxValue="5"
+                                   placeholder="-3..5"
+                                   style="width:100px">
+                        <p:ajax event="change"/>
+                    </p:inputNumber>
+                    <p:message for="yInput" display="icon"/>
+                </h:panelGrid>
+
+                <!-- R -->
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="R:"/>
+                    <div id="rPanel">
+                        <p:selectManyCheckbox id="rCheckbox" value="#{areaBean.selectedR}"
+                                              layout="grid" columns="3"
+                                              onchange="drawScene()">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                            <f:convertNumber integerOnly="true"/>
+                        </p:selectManyCheckbox>
+                    </div>
+                </h:panelGrid>
+
+                <!-- Кнопка проверки -->
+                <p:commandButton id="checkBtn" value="Проверить"
+                                 actionListener="#{areaBean.checkPoint}"
+                                 update=":mainForm:resultsTable"
+                                 validateClient="true"
+                                 style="margin-top:10px"
+                                 oncomplete="drawScene()"/>
+
+                <!-- Canvas -->
+                <div style="margin-top:20px; padding:10px; background:#fff; border-radius:8px;">
+                    <canvas id="graph" width="400" height="400"
+                            style="cursor:crosshair; display:block; border:2px solid #333; border-radius:8px;"></canvas>
+                </div>
+
+            </h:panelGroup>
+
+            <!-- Правая колонка -->
+            <h:panelGroup layout="block">
+                <h3>Статус</h3>
+
+                <h:panelGrid columns="2">
+                    <h:outputText value="Локальное время:"/>
+                    <h:outputText value="#{areaBean.formattedLocalTime}"/>
+
+                    <h:outputText value="Последняя ошибка:"/>
+                    <h:outputText value="#{areaBean.errorMessage != null ? areaBean.errorMessage : 'нет'}"/>
+                </h:panelGrid>
+
+                <p:commandButton id="clearHistoryBtn"
+                                 value="Сбросить историю"
+                                 action="#{resultsBean.reset}"
+                                 process="@this"
+                                 update=":mainForm:resultsTable"
+                                 oncomplete="clearGraphPoints()"
+                                 style="margin-top:10px"/>
+
+                <!-- Таблица -->
+                <p:dataTable id="resultsTable"
+                             value="#{resultsBean.results}"
+                             var="res"
+                             oncomplete="drawScene()"
+                             style="width:100%;"
+                             paginator="true"
+                             rows="10"
+                             rowsPerPageTemplate="5,10,20,50"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {CurrentPageReport}"
+                             currentPageReportTemplate="({currentPage} из {totalPages}, всего {totalRecords} записей)">
+                    <p:ajax event="page" oncomplete="drawScene()"/>
+                <p:column headerText="X"><h:outputText value="#{res.point.x}"/></p:column>
+                <p:column headerText="Y"><h:outputText value="#{res.point.y}"/></p:column>
+                <p:column headerText="R"><h:outputText value="#{res.point.r}"/></p:column>
+                <p:column headerText="Попадание"><h:outputText value="#{res.hit ? 'Да' : 'Нет'}"/></p:column>
+                <p:column headerText="Время сервера"><h:outputText value="#{res.formattedServerTime}"/></p:column>
+                <p:column headerText="Время выполнения (мс)"><h:outputText value="#{res.execTime}"/></p:column>
+            </p:dataTable>
+
+
+
+                <br/>
+                <h:link outcome="index" value="Вернуться на стартовую страницу"
+                        style="margin-top:10px; display:block;"/>
+            </h:panelGroup>
+        </h:panelGrid>
+    </h:form>
+</h:body>
+</html>
