@@ -52,12 +52,15 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
+        return parseToken(token).getSubject();
+    }
+
+    public Claims parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+                .getPayload();
     }
 
 }

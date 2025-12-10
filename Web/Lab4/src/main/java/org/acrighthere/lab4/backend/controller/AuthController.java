@@ -19,13 +19,13 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = "application/json")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> body) {
         User user = authService.register(body.get("username"), body.get("password"));
         return ResponseEntity.ok(Map.of("id",user.getId()));
     }
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", consumes = "application/json")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body,
                                    HttpServletResponse response) {
 

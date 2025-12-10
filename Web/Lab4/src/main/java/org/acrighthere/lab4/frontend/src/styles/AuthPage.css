@@ -1,0 +1,39 @@
+.auth-page {
+    width: 90%;
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+.auth-page header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-page form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-page input {
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.auth-page button {
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 16px;
+}
+
+@media (min-width: 1053px) {
+    .auth-page { max-width: 600px; }
+}
+
+@media (min-width: 705px) and (max-width: 1052px) {
+    .auth-page { max-width: 500px; }
+}
+
+@media (max-width: 704px) {
+    .auth-page { max-width: 100%; }
+}
