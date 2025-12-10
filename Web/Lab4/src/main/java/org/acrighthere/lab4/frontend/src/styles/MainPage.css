@@ -1,0 +1,35 @@
+.main-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
+    color: #fff;
+}
+
+.main-card {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 40px 60px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.main-card h1 {
+    margin-bottom: 10px;
+}
+
+.btn.primary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ff6b6b;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn.primary:hover {
+    background-color: #ff4c4c;
+}
