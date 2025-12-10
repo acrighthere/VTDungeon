@@ -2,6 +2,7 @@ package org.acrighthere.lab4.backend.service;
 
 import org.acrighthere.lab4.backend.model.User;
 import org.acrighthere.lab4.backend.repository.UserRepository;
+import org.acrighthere.lab4.backend.security.jwt.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = new JwtService();
     }
 
     public User register(String username, String password) {
@@ -25,9 +28,19 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public boolean login(String username, String password) {
+    public String login(String username, String password) {
         return userRepository.findByUsername(username)
-                .map(u -> passwordEncoder.matches(password,u.getPassword()))
-                .orElse(false);
+                .filter(u -> passwordEncoder.matches(password, u.getPassword()))
+                .map(u -> jwtService.generateAccessToken(username))
+                .orElseThrow(() -> new RuntimeException("Неверные данные"));
+    }
+
+    public String createRefresh(String username){
+        return jwtService.generateRefreshToken(username);
+    }
+
+    public String refreshAccess(String refreshToken){
+        String username = jwtService.extractUsername(refreshToken);
+        return jwtService.generateRefreshToken(username);
     }
 }
