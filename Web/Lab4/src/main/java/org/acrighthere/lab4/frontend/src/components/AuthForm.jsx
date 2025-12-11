@@ -1,42 +1,46 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
-export default function AuthForm({
-                                     username,
-                                     setUsername,
-                                     password,
-                                     setPassword,
-                                     isRegister,
-                                     onSubmit
-                                 }) {
+export default function AuthForm({ username, setUsername, password, setPassword, isRegister, onSubmit, disabled }) {
+
+    const rateLimitUntil = useSelector(state => state.auth.rateLimitUntil);
+    const isRateLimited = Boolean(rateLimitUntil && Date.now() < rateLimitUntil);
+
     return (
-        <form className="auth-card__form" onSubmit={onSubmit}>
-            <label className="input-group">
-                <span className="input-label">Логин</span>
+        <form onSubmit={onSubmit} className="auth-form">
+            <div className="field">
+                <label>Имя пользователя</label>
                 <input
-                    className="input-field"
-                    type="text"
-                    placeholder="Введите логин"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
+                    type="text"
+                    autoComplete="username"
                 />
-            </label>
+            </div>
 
-            <label className="input-group">
-                <span className="input-label">Пароль</span>
+            <div className="field">
+                <label>Пароль</label>
                 <input
-                    className="input-field"
-                    type="password"
-                    placeholder="Введите пароль"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    type="password"
+                    autoComplete={isRegister ? "new-password" : "current-password"}
                 />
-            </label>
+            </div>
 
-            <button className="btn primary" type="submit">
-                {isRegister ? "Зарегистрироваться" : "Войти"}
-            </button>
+            <div className="actions">
+                <button type="submit" className="btn primary" disabled={disabled || isRateLimited}>
+                    {isRegister ? "Зарегистрироваться" : "Войти"}
+                </button>
+            </div>
+
+            {isRateLimited && (
+                <div className="message warning">
+                    Вы временно заблокированы. Подожди немного и попробуй снова.
+                </div>
+            )}
         </form>
     );
 }
