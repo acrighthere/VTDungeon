@@ -6,6 +6,7 @@ import org.acrighthere.lab4.backend.model.Point;
 import org.acrighthere.lab4.backend.repository.PointRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,14 +15,22 @@ public class PointService {
     private final PointRepository pointRepository;
 
     public Point addPoint(double x, double y, int r, User user) {
-        if (!isValidX(x)  || !isValidY(y) || !isValidR(r)) {
-            throw new IllegalArgumentException();
-        }
+        long start = System.nanoTime();
+
         Point point = new Point();
         point.setX(x);
         point.setY(y);
         point.setR(r);
         point.setUser(user);
+        point.setCreatedAt(LocalDateTime.now());
+
+        boolean hit = isHit(point);
+        point.setHit(hit);
+
+        long end = System.nanoTime();
+        long durationMs = (end - start) / 1_000_000;
+        point.setExecutionTime(durationMs);
+
         pointRepository.save(point);
         return point;
     }

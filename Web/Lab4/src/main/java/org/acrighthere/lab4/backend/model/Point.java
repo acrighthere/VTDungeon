@@ -3,6 +3,8 @@ package org.acrighthere.lab4.backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "points")
@@ -14,6 +16,11 @@ public class Point {
     private double x;
     private double y;
     private int r;
+
+    private boolean hit;
+
+    private long executionTime;
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

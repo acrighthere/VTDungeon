@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.acrighthere.lab4.backend.model.User;
+import org.acrighthere.lab4.backend.repository.UserRepository;
 import org.acrighthere.lab4.backend.security.jwt.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,13 +13,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
 
-    public JwtFilter(JwtService jwtService) {
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+
+    public JwtFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -34,10 +40,15 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 String username = jwtService.extractUsername(token);
 
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(username, null, java.util.List.of());
+                // Берём User из репозитория
+                User user = userRepository.findByUsername(username)
+                        .orElse(null);
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                if (user != null) {
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
 
             } catch (Exception ignored) {}
         }
