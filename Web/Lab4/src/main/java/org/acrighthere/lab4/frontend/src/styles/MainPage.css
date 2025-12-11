@@ -1,62 +1,130 @@
+/* Общая страница */
 .main-page {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    background-color: #f5f5f5;
     min-height: 100vh;
-}
-
-.main-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    width: 600px;
-    max-width: 95%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-.btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
+    background-color: #f0f8ff;
+    padding: 20px 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .btn.primary {
-    background-color: #007bff;
+    position: fixed;
+    top: 20px;
+    right: 20px;   /* сдвинули вправо */
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #ff4d4f;
     color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;
+    z-index: 1000;
 }
 
 .btn.primary:hover {
-    background-color: #0056b3;
+    background-color: #d9363e;
 }
 
-svg {
-    margin: 10px 0;
-    background-color: #f0f8ff;
+.main-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* чуть выше центрируем */
+    padding: 60px 20px 20px 20px; /* верхнее пространство для кнопки */
 }
 
-table {
+/* Карточка с координатами и графикой */
+.main-card {
+    display: flex;
+    flex-direction: column; /* колоночная верстка */
+    gap: 20px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    max-width: 800px;
     width: 100%;
-    border-collapse: collapse;
 }
 
-table th, table td {
+/* Поля координат ставим вертикально */
+.coord-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Таблица */
+.main-card table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Стили для полей ввода и селекторов */
+.coord-inputs input,
+.coord-inputs select {
+    padding: 8px 12px;
+    border-radius: 6px;
     border: 1px solid #ccc;
-    padding: 6px;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.coord-inputs input:focus,
+.coord-inputs select:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 5px rgba(24, 144, 255, 0.5);
+}
+
+/* Кнопка "Проверить точку" */
+.main-card button:not(.primary) {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #1890ff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.main-card button:not(.primary):disabled {
+    background-color: #a0c5f8;
+    cursor: not-allowed;
+}
+
+.main-card button:not(.primary):hover:not(:disabled) {
+    background-color: #096dd9;
+}
+
+
+.main-card table th,
+.main-card table td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
     text-align: center;
 }
 
-table th {
-    background-color: #e6e6e6;
+.main-card table th {
+    background-color: #1890ff;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.main-card table tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+
+.main-card table tr:hover {
+    background-color: #e6f7ff;
+}
+
+/* CoordinatePlane */
+svg {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9fcff;
 }

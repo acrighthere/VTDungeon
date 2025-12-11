@@ -28,7 +28,7 @@ public class PointService {
         point.setHit(hit);
 
         long end = System.nanoTime();
-        long durationMs = (end - start) / 1_000_000;
+        double durationMs = (end - start) / 1_000_000.0; // дробное число
         point.setExecutionTime(durationMs);
 
         pointRepository.save(point);

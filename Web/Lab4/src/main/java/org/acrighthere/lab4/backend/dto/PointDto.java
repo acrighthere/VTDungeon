@@ -9,7 +9,7 @@ public class PointDto {
     private double y;
     private int r;
     private boolean hit;
-    private long executionTime;
+    private double executionTime;
     private String createdAt;
     private String owner;
 }

@@ -36,7 +36,7 @@ export default function CoordInputs() {
     }, [x, y, r, yError, dispatch]);
 
     return (
-        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+        <div className="coord-inputs">
             <XSelector value={x} onChange={setX} />
             <YInput value={y} onChange={setY} error={yError} />
             <RSelector value={r} onChange={setR} />

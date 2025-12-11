@@ -17,8 +17,8 @@ public class PointMapper {
         dto.setY(point.getY());
         dto.setR(point.getR());
         dto.setHit(hit);
-        dto.setExecutionTime(point.getExecutionTime());
-        dto.setCreatedAt(point.getCreatedAt().toString());
+        dto.setExecutionTime(Math.round(point.getExecutionTime() * 100.0) / 100.0);
+        dto.setCreatedAt(point.getCreatedAt().format(FORMATTER));
         if (point.getUser() != null) {
             dto.setOwner(point.getUser().getUsername());
         }
