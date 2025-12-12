@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import CoordInputs from "../components/CoordInputs";
 import CoordinatePlane from "../components/CoordinatePlane";
 import CheckButton from "../components/CheckButton";
+import ClearButton from "../components/ClearButton";
 import ResultsTable from "../components/ResultsTable";
 
 import { fetchPoints } from "../store/pointsSlice";
@@ -19,7 +20,6 @@ export default function MainPage({ onLogout }) {
     const coords = useSelector(state => state.coords);
     const points = useSelector(state => state.points.items);
 
-    // Проверка токена при storage change
     useEffect(() => {
         const handleStorage = (e) => {
             if (e.key === "accessToken" && !e.newValue) {
@@ -30,7 +30,6 @@ export default function MainPage({ onLogout }) {
         return () => window.removeEventListener("storage", handleStorage);
     }, [navigate]);
 
-    // Загрузка прошлых точек при монтировании
     useEffect(() => {
         dispatch(fetchPoints());
     }, [dispatch]);
@@ -46,11 +45,14 @@ export default function MainPage({ onLogout }) {
                         dispatch(setCoordsFromCanvas({ x, y }))
                     }
                 />
-                <CheckButton />
+                <div className="buttons-row">
+                    <CheckButton />
+                    <ClearButton />
+                    <button className="logout-btn" onClick={onLogout}>
+                        Выйти
+                    </button>
+                </div>
                 <ResultsTable points={points} />
-                <button className="btn primary" onClick={onLogout}>
-                    Выйти
-                </button>
             </div>
         </div>
     );

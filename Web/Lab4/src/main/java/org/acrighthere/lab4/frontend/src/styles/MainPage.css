@@ -4,38 +4,16 @@
     background-color: #f0f8ff;
     padding: 20px 40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.btn.primary {
-    position: fixed;
-    top: 20px;
-    right: 20px;   /* сдвинули вправо */
-    padding: 6px 12px;
-    border-radius: 6px;
-    background-color: #ff4d4f;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 14px;
-    width: auto;
-    z-index: 1000;
-}
-
-.btn.primary:hover {
-    background-color: #d9363e;
-}
-
-.main-page {
     display: flex;
     justify-content: center;
     align-items: flex-start; /* чуть выше центрируем */
-    padding: 60px 20px 20px 20px; /* верхнее пространство для кнопки */
+    padding-top: 80px; /* пространство для верхней кнопки выхода */
 }
 
 /* Карточка с координатами и графикой */
 .main-card {
     display: flex;
-    flex-direction: column; /* колоночная верстка */
+    flex-direction: column;
     gap: 20px;
     background-color: #f8f9fa;
     padding: 20px;
@@ -77,7 +55,14 @@
     box-shadow: 0 0 5px rgba(24, 144, 255, 0.5);
 }
 
-/* Кнопка "Проверить точку" */
+/* Ряд кнопок (Проверить, Очистить) */
+.buttons-row {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+    justify-content: flex-start; /* слева */
+}
+
 .main-card button:not(.primary) {
     padding: 8px 16px;
     border-radius: 6px;
@@ -99,7 +84,7 @@
     background-color: #096dd9;
 }
 
-
+/* Таблица */
 .main-card table th,
 .main-card table td {
     border: 1px solid #ccc;
@@ -127,4 +112,31 @@ svg {
     border: 1px solid #ccc;
     border-radius: 6px;
     background-color: #f9fcff;
+}
+
+.logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #ff4d4f;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+.logout-btn:hover {
+    background-color: #d9363e;
+}
+
+.btn.secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn.secondary:hover {
+    background-color: #5a6268;
 }

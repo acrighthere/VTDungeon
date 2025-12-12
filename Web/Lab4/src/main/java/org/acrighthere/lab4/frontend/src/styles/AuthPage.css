@@ -51,7 +51,8 @@ html, body, #root {
     backdrop-filter: blur(6px);
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    justify-content: flex-start; /* элементы сверху вниз */
 }
 
 /* ===== ХЕДЕР ===== */
@@ -142,7 +143,7 @@ html, body, #root {
 .btn.ghost {
     background: transparent;
     color: var(--muted);
-    margin-top: 8px;
+    margin-top: 0;
 }
 
 /* ===== СООБЩЕНИЯ ===== */
@@ -180,9 +181,13 @@ html, body, #root {
 .auth-card__footer {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    margin-top: 6px;
+    gap: 12px;
+    align-items: stretch; /* кнопки на всю ширину */
+    margin-top: 20px; /* отступ от формы */
+}
+
+.auth-card__footer .btn.ghost {
+    width: 100%; /* растягиваем на ширину карточки */
 }
 
 /* ===== АДАПТИВ ===== */
