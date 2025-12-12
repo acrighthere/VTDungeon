@@ -1,4 +1,14 @@
-export default function ResultsTable({ points }) {
+import React from "react";
+import { useSelector } from "react-redux";
+
+export default function ResultsTable() {
+    const { items, currentPage, pageSize } = useSelector(state => state.points);
+
+    const paginatedPoints = items.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
+    );
+
     return (
         <table border="1" cellPadding="6">
             <thead>
@@ -13,7 +23,7 @@ export default function ResultsTable({ points }) {
             </tr>
             </thead>
             <tbody>
-            {points.map(p => (
+            {paginatedPoints.map(p => (
                 <tr key={p.id}>
                     <td>{p.x}</td>
                     <td>{p.y}</td>

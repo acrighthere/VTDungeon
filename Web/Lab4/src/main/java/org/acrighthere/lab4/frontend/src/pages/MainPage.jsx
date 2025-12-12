@@ -9,10 +9,11 @@ import ClearButton from "../components/Buttons/ClearButton";
 import LogoutButton from "../components/Buttons/LogoutButton";
 import ResultsTable from "../components/ResultsTable";
 
-import { fetchPoints } from "../store/pointsSlice";
+import {fetchPoints, sendPoint} from "../store/pointsSlice";
 import { setCoordsFromCanvas } from "../store/coordsSlice";
 
 import '../styles/MainPage.css';
+import Pagination from "../components/Pagination";
 
 export default function MainPage({ onLogout }) {
     const dispatch = useDispatch();
@@ -42,9 +43,9 @@ export default function MainPage({ onLogout }) {
                 <CoordinatePlane
                     r={coords.r}
                     points={points}
-                    onCanvasClick={(x, y) =>
-                        dispatch(setCoordsFromCanvas({ x, y }))
-                    }
+                    onCanvasClick={(x, y, r) => {
+                        dispatch(sendPoint({ x, y, r }));
+                    }}
                 />
                 <div className="buttons-row">
                     <CheckButton />
@@ -52,6 +53,7 @@ export default function MainPage({ onLogout }) {
                     <LogoutButton onLogout={onLogout} />
                 </div>
                 <ResultsTable points={points} />
+                <Pagination />
             </div>
         </div>
     );
