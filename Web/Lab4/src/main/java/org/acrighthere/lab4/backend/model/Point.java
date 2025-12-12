@@ -19,7 +19,7 @@ public class Point {
 
     private boolean hit;
 
-    private long executionTime;
+    private double executionTime;
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

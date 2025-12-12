@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,30 +25,29 @@ public class PointController {
             @RequestParam double x,
             @RequestParam double y,
             @RequestParam int r,
-            @AuthenticationPrincipal User user  // Spring Security подставит текущего пользователя
+            @AuthenticationPrincipal User user
     ) {
         if (user == null) {
-            return ResponseEntity.status(401).build();  // неавторизованный
+            return ResponseEntity.status(401).build();
         }
 
         Point point = pointService.addPoint(x, y, r, user);
         boolean hit = pointService.isHit(point);
-        return ResponseEntity.ok(PointMapper.toDto(point, hit));
+        return ResponseEntity.ok(PointMapper.toDto(point,hit));
     }
 
-    @GetMapping
-    public ResponseEntity<List<PointDto>> getPoints(
-            @AuthenticationPrincipal User user
-    ) {
-        if (user == null) {
-            return ResponseEntity.status(401).build(); // неавторизованный
-        }
-
-        List<Point> points = pointService.getPointsByUser(user);
+    @GetMapping("")
+    public ResponseEntity<List<PointDto>> getPoints() {
         return ResponseEntity.ok(
-                points.stream()
-                        .map(p -> PointMapper.toDto(p, pointService.isHit(p)))
+                pointService.getAllPoints().stream()
+                        .map(p -> PointMapper.toDto(p, p.isHit()))
                         .toList()
         );
+    }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<Void> clearPoints(@AuthenticationPrincipal User user) {
+        pointService.clearPointsByUser(user);
+        return ResponseEntity.ok().build();
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.acrighthere.lab4.backend.model.User;
 import org.acrighthere.lab4.backend.model.Point;
 import org.acrighthere.lab4.backend.repository.PointRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,9 @@ public class PointService {
     private final PointRepository pointRepository;
 
     public Point addPoint(double x, double y, int r, User user) {
+        if(!isValidX(x) || !isValidY(y) || !isValidR(r)) {
+            throw new IllegalArgumentException("Некорректные координаты или радиус");
+        }
         long start = System.nanoTime();
 
         Point point = new Point();
@@ -46,11 +50,26 @@ public class PointService {
         double y = point.getY();
         int r = point.getR();
         if (x >= 0 && y >= 0) return x <= r && y <= r;
-        if (x <= 0 && y >= 0) return y <= (x + r/2.0) + (double) r /2 && x >= -r;
+        if (x <= 0 && y >= 0) {
+            if (x < -r) return false;
+            double yMax = 0.5 * (x + r);
+            return y <= yMax && y >= 0;
+        }
         if (x <= 0 && y <= 0) return (x*x + y*y) <= (r*r);
         return false;
     }
 
+
+    public void clearPointsByUser(User user) {
+        List<Point> points = pointRepository.findAll().stream()
+                .filter(p -> p.getUser().getId() == user.getId())
+                .toList();
+        pointRepository.deleteAll(points);
+    }
+
+    public List<Point> getAllPoints() {
+        return pointRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
 
     private boolean isValidX(double x) {
         return x >= -3 && x <= 5;

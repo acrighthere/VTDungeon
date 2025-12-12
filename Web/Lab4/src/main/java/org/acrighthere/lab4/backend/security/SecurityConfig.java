@@ -43,6 +43,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/points/**").authenticated()
                         .requestMatchers("/", "/index.html", "/static/**", "/css/**", "/js/**", "/assets/**",
                                 "/favicon.ico", "/error", "/manifest.json", "/logo*.png").permitAll()
                         .anyRequest().authenticated()
