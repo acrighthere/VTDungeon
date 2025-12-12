@@ -18,15 +18,14 @@ export const fetchPoints = createAsyncThunk(
 export const sendPoint = createAsyncThunk(
     "points/sendPoint",
     async ({ x, y, r }, thunkAPI) => {
-        if (x === null || y === null || r === null) {
-            return thunkAPI.rejectWithValue("Координаты или радиус не выбраны");
-        }
         try {
-            const res = await api.post("/points/add", null, {
-                params: { x, y, r }
-            });
+            const res = await api.post("/points/add", null, { params: { x, y, r } });
             return res.data;
         } catch (err) {
+            if (err.response && err.response.status === 429) {
+                const retryAfter = err.response.data.retryAfter || 60;
+                return thunkAPI.rejectWithValue(`Слишком часто! Подождите ${retryAfter} секунд`);
+            }
             return thunkAPI.rejectWithValue("Ошибка отправки точки");
         }
     }
@@ -37,13 +36,23 @@ const pointsSlice = createSlice({
     initialState: {
         items: [],
         loading: false,
-        error: null
+        error: null,
+        currentPage: 1,
+        pageSize: 5
     },
     reducers: {
         resetPoints: state => {
             state.items = [];
             state.loading = false;
             state.error = null;
+            state.currentPage = 1;
+        },
+        setPage: (state, action) => {
+            state.currentPage = action.payload;
+        },
+        setPageSize: (state, action) => {
+            state.pageSize = action.payload;
+            state.currentPage = 1;
         }
     },
     extraReducers: builder => {
@@ -54,7 +63,6 @@ const pointsSlice = createSlice({
             })
             .addCase(fetchPoints.fulfilled, (state, action) => {
                 state.loading = false;
-                // Сортировка от новых к старым
                 state.items = action.payload.sort(
                     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                 );
@@ -69,7 +77,7 @@ const pointsSlice = createSlice({
             })
             .addCase(sendPoint.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items.unshift(action.payload); // новые точки в начало
+                state.items.unshift(action.payload);
             })
             .addCase(sendPoint.rejected, (state, action) => {
                 state.loading = false;
@@ -78,5 +86,5 @@ const pointsSlice = createSlice({
     }
 });
 
-export const { resetPoints } = pointsSlice.actions;
+export const { resetPoints, setPage, setPageSize } = pointsSlice.actions;
 export default pointsSlice.reducer;
