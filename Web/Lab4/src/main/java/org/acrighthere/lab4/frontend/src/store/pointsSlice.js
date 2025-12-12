@@ -39,17 +39,25 @@ const pointsSlice = createSlice({
         loading: false,
         error: null
     },
-    reducers: {},
+    reducers: {
+        resetPoints: state => {
+            state.items = [];
+            state.loading = false;
+            state.error = null;
+        }
+    },
     extraReducers: builder => {
         builder
-            // fetchPoints
             .addCase(fetchPoints.pending, state => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(fetchPoints.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items = action.payload;
+                // Сортировка от новых к старым
+                state.items = action.payload.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                );
             })
             .addCase(fetchPoints.rejected, (state, action) => {
                 state.loading = false;
@@ -61,7 +69,7 @@ const pointsSlice = createSlice({
             })
             .addCase(sendPoint.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items.unshift(action.payload);
+                state.items.unshift(action.payload); // новые точки в начало
             })
             .addCase(sendPoint.rejected, (state, action) => {
                 state.loading = false;
@@ -70,4 +78,5 @@ const pointsSlice = createSlice({
     }
 });
 
+export const { resetPoints } = pointsSlice.actions;
 export default pointsSlice.reducer;

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { sendPoint } from "../store/pointsSlice";
+import { sendPoint } from "../../store/pointsSlice";
 
 export default function CheckButton() {
     const dispatch = useDispatch();

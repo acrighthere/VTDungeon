@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import api from "../api";
-import { fetchPoints } from "../store/pointsSlice";
+import api from "../../api";
+import { fetchPoints } from "../../store/pointsSlice";
 
 export default function ClearButton() {
     const dispatch = useDispatch();

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCredentials, setRateLimit } from "../store/authSlice";
 import api from "../api";
 import "../styles/AuthPage.css";
-import AuthForm from "../components/AuthForm";
+import AuthForm from "../components/forms/AuthForm";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {

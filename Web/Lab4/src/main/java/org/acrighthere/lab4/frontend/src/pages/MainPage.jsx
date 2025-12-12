@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import CoordInputs from "../components/CoordInputs";
 import CoordinatePlane from "../components/CoordinatePlane";
-import CheckButton from "../components/CheckButton";
-import ClearButton from "../components/ClearButton";
+import CheckButton from "../components/Buttons/CheckButton";
+import ClearButton from "../components/Buttons/ClearButton";
+import LogoutButton from "../components/Buttons/LogoutButton";
 import ResultsTable from "../components/ResultsTable";
 
 import { fetchPoints } from "../store/pointsSlice";
@@ -48,9 +49,7 @@ export default function MainPage({ onLogout }) {
                 <div className="buttons-row">
                     <CheckButton />
                     <ClearButton />
-                    <button className="logout-btn" onClick={onLogout}>
-                        Выйти
-                    </button>
+                    <LogoutButton onLogout={onLogout} />
                 </div>
                 <ResultsTable points={points} />
             </div>
