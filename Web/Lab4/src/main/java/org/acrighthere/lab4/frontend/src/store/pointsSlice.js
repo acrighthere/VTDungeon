@@ -61,7 +61,7 @@ const pointsSlice = createSlice({
             })
             .addCase(sendPoint.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items.push(action.payload);
+                state.items.unshift(action.payload);
             })
             .addCase(sendPoint.rejected, (state, action) => {
                 state.loading = false;
