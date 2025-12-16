@@ -1,9 +1,15 @@
 package org.acrighthere.lab4.backend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.acrighthere.lab4.backend.dto.PointDto;
 import org.acrighthere.lab4.backend.model.User;
 import org.acrighthere.lab4.backend.model.Point;
 import org.acrighthere.lab4.backend.repository.PointRepository;
+import org.acrighthere.lab4.backend.util.PointMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +38,7 @@ public class PointService {
         point.setHit(hit);
 
         long end = System.nanoTime();
-        double durationMs = (end - start) / 1_000_000.0; // дробное число
+        double durationMs = (end - start) / 1_000_000.0;
         point.setExecutionTime(durationMs);
 
         pointRepository.save(point);
@@ -60,16 +66,20 @@ public class PointService {
     }
 
 
+    @Transactional
     public void clearPointsByUser(User user) {
-        List<Point> points = pointRepository.findAll().stream()
-                .filter(p -> p.getUser().getId() == user.getId())
-                .toList();
-        pointRepository.deleteAll(points);
+        List<Point> points = pointRepository.findByUserId(user.getId());
+        if (!points.isEmpty()) {
+            pointRepository.deleteAll(points);
+        }
     }
 
-    public List<Point> getAllPoints() {
-        return pointRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+    public Page<PointDto> getPoints(int page, int size) {
+        Page<Point> pointsPage = pointRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        return pointsPage.map(p -> PointMapper.toDto(p, isHit(p)));
     }
+
 
     private boolean isValidX(double x) {
         return x >= -3 && x <= 5;

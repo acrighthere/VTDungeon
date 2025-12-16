@@ -8,22 +8,21 @@ import CheckButton from "../components/Buttons/CheckButton";
 import ClearButton from "../components/Buttons/ClearButton";
 import LogoutButton from "../components/Buttons/LogoutButton";
 import ResultsTable from "../components/ResultsTable";
-
-import {fetchPoints, sendPoint} from "../store/pointsSlice";
-import { setCoordsFromCanvas } from "../store/coordsSlice";
-
-import '../styles/MainPage.css';
 import Pagination from "../components/Pagination";
+
+import { fetchPoints, sendPoint, setPage } from "../store/pointsSlice";
+import "../styles/MainPage.css";
 
 export default function MainPage({ onLogout }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const coords = useSelector(state => state.coords);
-    const points = useSelector(state => state.points.items);
+    const { items: points, currentPage, totalPages, pageSize } =
+        useSelector(state => state.points);
 
     useEffect(() => {
-        const handleStorage = (e) => {
+        const handleStorage = e => {
             if (e.key === "accessToken" && !e.newValue) {
                 navigate("/login", { replace: true });
             }
@@ -33,27 +32,46 @@ export default function MainPage({ onLogout }) {
     }, [navigate]);
 
     useEffect(() => {
-        dispatch(fetchPoints());
-    }, [dispatch]);
+        dispatch(fetchPoints({ page: currentPage, size: pageSize }));
+    }, [dispatch, currentPage, pageSize]);
+
+    const handlePageChange = page => {
+        dispatch(setPage(page));
+    };
+
+    const handleCanvasClick = (x, y, r) => {
+        dispatch(sendPoint({ x, y, r }))
+            .unwrap()
+            .then(() => {
+                dispatch(setPage(0));
+                dispatch(fetchPoints({ page: 0, size: pageSize }));
+            });
+    };
 
     return (
         <div className="main-page">
             <div className="main-card">
                 <CoordInputs />
+
                 <CoordinatePlane
                     r={coords.r}
                     points={points}
-                    onCanvasClick={(x, y, r) => {
-                        dispatch(sendPoint({ x, y, r }));
-                    }}
+                    onCanvasClick={handleCanvasClick}
                 />
+
                 <div className="buttons-row">
                     <CheckButton />
                     <ClearButton />
                     <LogoutButton onLogout={onLogout} />
                 </div>
+
                 <ResultsTable points={points} />
-                <Pagination />
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );

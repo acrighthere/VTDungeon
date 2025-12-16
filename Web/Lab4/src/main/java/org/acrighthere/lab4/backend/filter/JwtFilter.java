@@ -40,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 String username = jwtService.extractUsername(token);
 
-                // Берём User из репозитория
                 User user = userRepository.findByUsername(username)
                         .orElse(null);
 

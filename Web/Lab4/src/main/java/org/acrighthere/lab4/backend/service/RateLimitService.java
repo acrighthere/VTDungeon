@@ -14,7 +14,6 @@ public class RateLimitService {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    // Лимиты
     private final Bandwidth authRegisterLimit = Bandwidth.classic(
             3, Refill.greedy(3, Duration.ofHours(1))
     );

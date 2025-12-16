@@ -140,3 +140,16 @@ svg {
 .btn.secondary:hover {
     background-color: #5a6268;
 }
+
+@media (min-width: 1053px) {
+    .auth-card { max-width: 500px; }
+}
+
+@media (min-width: 705px) and (max-width: 1052px) {
+    .auth-card { max-width: 420px; }
+}
+
+@media (max-width: 704px) {
+    .auth-card { width: 100%; }
+    .auth-page { padding: 20px 8px; }
+}

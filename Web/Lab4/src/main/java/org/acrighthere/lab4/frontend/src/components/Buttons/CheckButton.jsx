@@ -1,13 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { sendPoint } from "../../store/pointsSlice";
+import { sendPoint, fetchPoints, setPage } from "../../store/pointsSlice";
 
 export default function CheckButton() {
     const dispatch = useDispatch();
     const { x, y, r } = useSelector(state => state.coords);
-    const loading = useSelector(state => state.points.loading);
+    const { loading, pageSize } = useSelector(state => state.points);
 
     const handleClick = () => {
-        dispatch(sendPoint({ x, y, r }));
+        dispatch(sendPoint({ x, y, r }))
+            .unwrap()
+            .then(() => {ч
+                dispatch(setPage(0));
+                dispatch(fetchPoints({ page: 0, size: pageSize }));
+            });
     };
 
     return (

@@ -1,5 +1,6 @@
 package org.acrighthere.lab4.backend.service;
 
+import org.acrighthere.lab4.backend.exception.InvalidCredentialsException;
 import org.acrighthere.lab4.backend.model.User;
 import org.acrighthere.lab4.backend.repository.UserRepository;
 import org.acrighthere.lab4.backend.security.jwt.JwtService;
@@ -14,7 +15,7 @@ public class AuthService {
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtService jwtService) {  // ← добавь его сюда
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -34,7 +35,7 @@ public class AuthService {
         return userRepository.findByUsername(username)
                 .filter(u -> passwordEncoder.matches(password, u.getPassword()))
                 .map(u -> jwtService.generateAccessToken(username))
-                .orElseThrow(() -> new RuntimeException("Неверные данные"));
+                .orElseThrow(InvalidCredentialsException::new);
     }
 
     public String createRefresh(String username){

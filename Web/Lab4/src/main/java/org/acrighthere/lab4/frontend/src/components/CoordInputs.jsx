@@ -8,21 +8,20 @@ import { setCoords } from "../store/coordsSlice";
 export default function CoordInputs() {
     const dispatch = useDispatch();
     const coords = useSelector(state => state.coords);
-    const user = useSelector(state => state.auth.user); // текущий пользователь
+    const user = useSelector(state => state.auth.user);
 
     const [x, setX] = useState(coords.x ?? null);
     const [y, setY] = useState(coords.y ?? "");
     const [r, setR] = useState(coords.r ?? null);
     const [yError, setYError] = useState(null);
 
-    // Сброс формы при смене пользователя (логин/логаут)
     useEffect(() => {
         setX(null);
         setY("");
         setR(null);
     }, [user]);
 
-    // Проверка Y
+
     useEffect(() => {
         if (y === "" || y === null) {
             setYError(null);
@@ -32,7 +31,6 @@ export default function CoordInputs() {
         }
     }, [y]);
 
-    // Отправляем изменения в Redux
     useEffect(() => {
         const yVal = y === "" || y === null ? null : parseFloat(String(y).replace(",", "."));
         if (yError === null) {

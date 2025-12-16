@@ -4,7 +4,7 @@ export default function CoordinatePlane({ r, points, onCanvasClick }) {
     const size = 400;
     const center = size / 2;
     const gridDivisions = 5;
-    const scale = center / gridDivisions; // 1 единица = scale px
+    const scale = center / gridDivisions;
 
     const svgRef = useRef(null);
 
@@ -49,15 +49,12 @@ export default function CoordinatePlane({ r, points, onCanvasClick }) {
         const rPx = r * scale;
 
         return [
-            // 1-я четверть: квадрат
             <rect key="q1" x={center} y={center - rPx} width={rPx} height={rPx} fill="rgba(0,0,255,0.3)" />,
-            // 2-я четверть: треугольник (катет вдоль Y = R/2)
             <polygon
                 key="q2"
                 points={`${center},${center} ${center - rPx},${center} ${center},${center - rPx/2}`}
                 fill="rgba(0,255,0,0.3)"
             />,
-            // 3-я четверть: четверть круга
             <path
                 key="q3"
                 d={`M ${center},${center} L ${center - rPx},${center} A ${rPx} ${rPx} 0 0 0 ${center},${center + rPx} Z`}

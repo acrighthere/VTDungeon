@@ -1,30 +1,38 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api";
 
-// Получение всех точек
+// Загрузка страницы точек (серверная пагинация)
 export const fetchPoints = createAsyncThunk(
     "points/fetchPoints",
-    async (_, thunkAPI) => {
+    async ({ page = 0, size = 5 }, thunkAPI) => {
         try {
-            const res = await api.get("/points");
-            return res.data;
+            const res = await api.get("/points", { params: { page, size } });
+            return {
+                points: res.data.content,
+                currentPage: res.data.number,
+                totalPages: res.data.totalPages
+            };
         } catch (err) {
             return thunkAPI.rejectWithValue("Ошибка загрузки точек");
         }
     }
 );
 
-// Отправка точки на проверку
+// Отправка точки
 export const sendPoint = createAsyncThunk(
     "points/sendPoint",
     async ({ x, y, r }, thunkAPI) => {
         try {
-            const res = await api.post("/points/add", null, { params: { x, y, r } });
+            const res = await api.post("/points/add", null, {
+                params: { x, y, r }
+            });
             return res.data;
         } catch (err) {
             if (err.response && err.response.status === 429) {
                 const retryAfter = err.response.data.retryAfter || 60;
-                return thunkAPI.rejectWithValue(`Слишком часто! Подождите ${retryAfter} секунд`);
+                return thunkAPI.rejectWithValue(
+                    `Слишком часто! Подождите ${retryAfter} секунд`
+                );
             }
             return thunkAPI.rejectWithValue("Ошибка отправки точки");
         }
@@ -37,22 +45,24 @@ const pointsSlice = createSlice({
         items: [],
         loading: false,
         error: null,
-        currentPage: 1,
+        currentPage: 0,
+        totalPages: 0,
         pageSize: 5
     },
     reducers: {
-        resetPoints: state => {
-            state.items = [];
-            state.loading = false;
-            state.error = null;
-            state.currentPage = 1;
-        },
-        setPage: (state, action) => {
+        setPage(state, action) {
             state.currentPage = action.payload;
         },
-        setPageSize: (state, action) => {
+        setPageSize(state, action) {
             state.pageSize = action.payload;
-            state.currentPage = 1;
+            state.currentPage = 0;
+        },
+        resetPoints(state) {
+            state.items = [];
+            state.currentPage = 0;
+            state.totalPages = 0;
+            state.loading = false;
+            state.error = null;
         }
     },
     extraReducers: builder => {
@@ -63,9 +73,9 @@ const pointsSlice = createSlice({
             })
             .addCase(fetchPoints.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items = action.payload.sort(
-                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                );
+                state.items = action.payload.points;
+                state.currentPage = action.payload.currentPage;
+                state.totalPages = action.payload.totalPages;
             })
             .addCase(fetchPoints.rejected, (state, action) => {
                 state.loading = false;
@@ -75,9 +85,9 @@ const pointsSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(sendPoint.fulfilled, (state, action) => {
+            .addCase(sendPoint.fulfilled, state => {
                 state.loading = false;
-                state.items.unshift(action.payload);
+                state.currentPage = 0; // ВАЖНО
             })
             .addCase(sendPoint.rejected, (state, action) => {
                 state.loading = false;
@@ -86,5 +96,5 @@ const pointsSlice = createSlice({
     }
 });
 
-export const { resetPoints, setPage, setPageSize } = pointsSlice.actions;
+export const { setPage, setPageSize, resetPoints } = pointsSlice.actions;
 export default pointsSlice.reducer;
