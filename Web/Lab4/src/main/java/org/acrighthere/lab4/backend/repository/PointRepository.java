@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface PointRepository extends JpaRepository<Point, Integer> {
     Optional<Point> findById(long id);
     List<Point> findByUserId(long id);
-    @Transactional
     void deleteByUserId(long userId);
 
 }
