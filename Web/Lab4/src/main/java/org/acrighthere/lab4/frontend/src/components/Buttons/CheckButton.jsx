@@ -9,7 +9,7 @@ export default function CheckButton() {
     const handleClick = () => {
         dispatch(sendPoint({ x, y, r }))
             .unwrap()
-            .then(() => {ч
+            .then(() => {
                 dispatch(setPage(0));
                 dispatch(fetchPoints({ page: 0, size: pageSize }));
             });

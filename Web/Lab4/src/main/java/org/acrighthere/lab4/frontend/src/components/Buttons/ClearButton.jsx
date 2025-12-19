@@ -15,7 +15,6 @@ export default function ClearButton() {
             dispatch(fetchPoints({ page: 0, size: pageSize }));
         } catch (err) {
             console.error("Ошибка при очистке точек:", err);
-            alert("Не удалось очистить точки");
         }
     };
 
