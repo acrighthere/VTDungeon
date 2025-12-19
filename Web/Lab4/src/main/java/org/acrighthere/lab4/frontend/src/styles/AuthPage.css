@@ -19,69 +19,71 @@
     --msg-warning-text: #92400e;
 }
 
-* { box-sizing: border-box; }
-
-html, body, #root {
-    height: 100%;
-    margin: 0;
-    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+/* ===== RESET ===== */
+* {
+    box-sizing: border-box;
 }
 
-/* ===== СТРАНИЦА ===== */
+html, body, #root {
+    min-height: 100%;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* ===== СТРАНИЦА (mobile-first) ===== */
 .auth-page {
     min-height: 100vh;
+    padding: 20px 12px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 40px 16px;
+    align-items: flex-start;
     background:
             radial-gradient(1200px 600px at 10% 20%, rgba(124,58,237,0.12), transparent 10%),
             linear-gradient(120deg, var(--bg1), var(--bg2));
+    overflow-y: auto; /* вертикальная прокрутка */
 }
 
 /* ===== КАРТОЧКА ===== */
 .auth-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 100%;
+    max-height: 95vh; /* не выходит за экран */
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    border-radius: 14px;
+    padding: clamp(16px, 4vw, 28px);
     border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
     backdrop-filter: blur(6px);
+
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start; /* элементы сверху вниз */
+    overflow-y: auto; /* скролл внутри карточки, если много полей */
 }
 
 /* ===== ХЕДЕР ===== */
 .auth-card__header {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .brand {
     margin: 0;
-    font-size: 18px;
     font-weight: 600;
     color: #fff;
-    letter-spacing: 0.2px;
+    font-size: clamp(15px, 4vw, 18px);
 }
 
 .subtitle {
-    margin: 6px 0 0;
-    font-size: 12px;
+    margin-top: 6px;
+    font-size: clamp(11px, 3.5vw, 12px);
     color: var(--muted);
 }
 
 /* ===== ФОРМА ===== */
 .auth-form {
-    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: clamp(10px, 3vw, 12px);
 }
 
 .auth-form .field {
@@ -90,60 +92,59 @@ html, body, #root {
     gap: 6px;
 }
 
-.auth-form .field label {
+.auth-form label {
     font-size: 12px;
     color: var(--muted);
 }
 
-.auth-form .field input {
-    padding: 12px 14px;
+.auth-form input {
+    padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 14px);
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,0.06);
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0));
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
     color: #fff;
+    font-size: clamp(13px, 3.5vw, 14px);
     outline: none;
-    font-size: 14px;
     transition: box-shadow .15s, border-color .15s;
 }
 
-.auth-form .field input::placeholder {
+.auth-form input::placeholder {
     color: rgba(255,255,255,0.35);
 }
 
-.auth-form .field input:focus {
-    box-shadow: 0 6px 20px rgba(124,58,237,0.12);
+.auth-form input:focus {
     border-color: rgba(124,58,237,0.6);
+    box-shadow: 0 6px 20px rgba(124,58,237,0.12);
 }
 
 /* ===== КНОПКИ ===== */
 .actions {
+    margin-top: 8px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    align-items: center;
 }
 
 .btn,
 .auth-form button {
-    padding: 10px 14px;
+    width: 100%;
+    padding: clamp(9px, 3vw, 10px);
     border-radius: 10px;
     border: none;
-    cursor: pointer;
     font-weight: 600;
-    font-size: 14px;
-    width: 100%;
+    font-size: clamp(13px, 3.5vw, 14px);
+    cursor: pointer;
 }
 
 .btn.primary {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    color: white;
+    color: #fff;
     box-shadow: 0 8px 24px rgba(124,58,237,0.18);
 }
 
 .btn.ghost {
     background: transparent;
     color: var(--muted);
-    margin-top: 0;
 }
 
 /* ===== СООБЩЕНИЯ ===== */
@@ -151,9 +152,9 @@ html, body, #root {
     margin-top: 12px;
     padding: 10px;
     border-radius: 6px;
-    font-weight: 500;
-    text-align: center;
     font-size: 13px;
+    text-align: center;
+    font-weight: 500;
 }
 
 .message.info {
@@ -177,29 +178,48 @@ html, body, #root {
     50% { opacity: 0.7; }
 }
 
-/* ===== ФУТЕР КАРТОЧКИ ===== */
+/* ===== ФУТЕР ===== */
 .auth-card__footer {
+    margin-top: 18px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    align-items: stretch; /* кнопки на всю ширину */
-    margin-top: 20px; /* отступ от формы */
+    gap: 10px;
 }
 
-.auth-card__footer .btn.ghost {
-    width: 100%; /* растягиваем на ширину карточки */
+/* ===== ПЛАНШЕТ ===== */
+@media (min-width: 600px) {
+    .auth-page {
+        align-items: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        max-width: 420px;
+        border-radius: 16px;
+    }
 }
 
-/* ===== АДАПТИВ ===== */
-@media (min-width: 1053px) {
-    .auth-card { max-width: 500px; }
+/* ===== ДЕСКТОП ===== */
+@media (min-width: 1024px) {
+    .auth-card {
+        max-width: 500px;
+    }
 }
 
-@media (min-width: 705px) and (max-width: 1052px) {
-    .auth-card { max-width: 420px; }
-}
+/* ===== МАЛЕНЬКАЯ ВЫСОТА ЭКРАНА ===== */
+@media (max-height: 500px) {
+    .auth-card {
+        padding: 16px;
+        gap: 8px;
+    }
 
-@media (max-width: 704px) {
-    .auth-card { width: 100%; }
-    .auth-page { padding: 20px 8px; }
+    .auth-form .field input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .btn, .auth-form button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
 }
