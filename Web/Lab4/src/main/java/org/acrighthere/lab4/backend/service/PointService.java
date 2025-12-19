@@ -68,10 +68,7 @@ public class PointService {
 
     @Transactional
     public void clearPointsByUser(User user) {
-        List<Point> points = pointRepository.findByUserId(user.getId());
-        if (!points.isEmpty()) {
-            pointRepository.deleteAll(points);
-        }
+        pointRepository.deleteByUserId(user.getId());
     }
 
 

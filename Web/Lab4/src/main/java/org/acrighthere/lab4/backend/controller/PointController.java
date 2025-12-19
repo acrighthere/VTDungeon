@@ -26,10 +26,6 @@ public class PointController {
             @RequestParam int r,
             @AuthenticationPrincipal User user
     ) {
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
-
         Point point = pointService.addPoint(x, y, r, user);
         boolean hit = pointService.isHit(point);
         return ResponseEntity.ok(PointMapper.toDto(point, hit));
