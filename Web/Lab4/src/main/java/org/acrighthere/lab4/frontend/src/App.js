@@ -18,20 +18,16 @@ function App() {
             const token = localStorage.getItem("accessToken");
             if (token) {
                 try {
-                    // Проверяем валидность токена через API
-                    // Используем прямой axios запрос, чтобы избежать циклических обновлений токена
                     const response = await axios.get("http://localhost:8080/api/auth/verify", {
                         headers: {
                             Authorization: `Bearer ${token}`
                         },
                         timeout: 5000
                     });
-                    // Если токен валиден, устанавливаем его в Redux
                     if (response.status === 200) {
                         dispatch(setCredentials({ user: { username: "User" }, accessToken: token, refreshToken: null }));
                     }
                 } catch (error) {
-                    // Если токен невалиден или протух, очищаем его
                     localStorage.removeItem("accessToken");
                     dispatch(logout());
                 }
