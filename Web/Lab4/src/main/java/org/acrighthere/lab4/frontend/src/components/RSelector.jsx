@@ -1,5 +1,5 @@
 export default function RSelector({ value, onChange }) {
-    const values = [1, 2, 3, 4, 5];
+    const values = [-3,-2,-1,0,1, 2, 3, 4, 5];
 
     return (
         <div>

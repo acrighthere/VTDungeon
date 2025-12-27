@@ -44,7 +44,7 @@ export default function CoordinatePlane({ r, points, onCanvasClick }) {
     };
 
     const renderShapes = () => {
-        if (!r) return null;
+        if (r === null || r <= 0) return null;
 
         const rPx = r * scale;
 

@@ -6,6 +6,8 @@ export default function CheckButton() {
     const { x, y, r } = useSelector(state => state.coords);
     const { loading, pageSize } = useSelector(state => state.points);
 
+    const isValid = x !== null && y !== null && r !== null && r > 0;
+
     const handleClick = () => {
         dispatch(sendPoint({ x, y, r }))
             .unwrap()
@@ -17,7 +19,7 @@ export default function CheckButton() {
 
     return (
         <button
-            disabled={loading || x === null || y === null || r === null}
+            disabled={loading ||!isValid}
             onClick={handleClick}
         >
             {loading ? "Проверяю..." : "Проверить точку"}
