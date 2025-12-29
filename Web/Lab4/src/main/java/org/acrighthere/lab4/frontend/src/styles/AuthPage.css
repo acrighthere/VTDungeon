@@ -1,0 +1,225 @@
+/* ===== ШРИФТ ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* ===== ПЕРЕМЕННЫЕ ===== */
+:root {
+    --bg1: #0f172a;
+    --bg2: #1e293b;
+    --card: rgba(255,255,255,0.03);
+    --accent: #7c3aed;
+    --accent-2: #06b6d4;
+    --muted: rgba(255,255,255,0.7);
+    --glass: rgba(255,255,255,0.04);
+
+    --msg-info-bg: #dbeafe;
+    --msg-info-text: #1e40af;
+    --msg-error-bg: #fee2e2;
+    --msg-error-text: #991b1b;
+    --msg-warning-bg: #fffbeb;
+    --msg-warning-text: #92400e;
+}
+
+/* ===== RESET ===== */
+* {
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    min-height: 100%;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* ===== СТРАНИЦА (mobile-first) ===== */
+.auth-page {
+    min-height: 100vh;
+    padding: 20px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background:
+            radial-gradient(1200px 600px at 10% 20%, rgba(124,58,237,0.12), transparent 10%),
+            linear-gradient(120deg, var(--bg1), var(--bg2));
+    overflow-y: auto; /* вертикальная прокрутка */
+}
+
+/* ===== КАРТОЧКА ===== */
+.auth-card {
+    width: 100%;
+    max-width: 100%;
+    max-height: 95vh; /* не выходит за экран */
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius: 14px;
+    padding: clamp(16px, 4vw, 28px);
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    backdrop-filter: blur(6px);
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* скролл внутри карточки, если много полей */
+}
+
+/* ===== ХЕДЕР ===== */
+.auth-card__header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.brand {
+    margin: 0;
+    font-weight: 600;
+    color: #fff;
+    font-size: clamp(15px, 4vw, 18px);
+}
+
+.subtitle {
+    margin-top: 6px;
+    font-size: clamp(11px, 3.5vw, 12px);
+    color: var(--muted);
+}
+
+/* ===== ФОРМА ===== */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 3vw, 12px);
+}
+
+.auth-form .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.auth-form label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.auth-form input {
+    padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 14px);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    color: #fff;
+    font-size: clamp(13px, 3.5vw, 14px);
+    outline: none;
+    transition: box-shadow .15s, border-color .15s;
+}
+
+.auth-form input::placeholder {
+    color: rgba(255,255,255,0.35);
+}
+
+.auth-form input:focus {
+    border-color: rgba(124,58,237,0.6);
+    box-shadow: 0 6px 20px rgba(124,58,237,0.12);
+}
+
+/* ===== КНОПКИ ===== */
+.actions {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn,
+.auth-form button {
+    width: 100%;
+    padding: clamp(9px, 3vw, 10px);
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    font-size: clamp(13px, 3.5vw, 14px);
+    cursor: pointer;
+}
+
+.btn.primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.18);
+}
+
+.btn.ghost {
+    background: transparent;
+    color: var(--muted);
+}
+
+/* ===== СООБЩЕНИЯ ===== */
+.message {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.message.info {
+    background: var(--msg-info-bg);
+    color: var(--msg-info-text);
+}
+
+.message.error {
+    background: var(--msg-error-bg);
+    color: var(--msg-error-text);
+}
+
+.message.warning {
+    background: var(--msg-warning-bg);
+    color: var(--msg-warning-text);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ===== ФУТЕР ===== */
+.auth-card__footer {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ===== ПЛАНШЕТ ===== */
+@media (min-width: 600px) {
+    .auth-page {
+        align-items: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        max-width: 420px;
+        border-radius: 16px;
+    }
+}
+
+/* ===== ДЕСКТОП ===== */
+@media (min-width: 1024px) {
+    .auth-card {
+        max-width: 500px;
+    }
+}
+
+/* ===== МАЛЕНЬКАЯ ВЫСОТА ЭКРАНА ===== */
+@media (max-height: 500px) {
+    .auth-card {
+        padding: 16px;
+        gap: 8px;
+    }
+
+    .auth-form .field input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .btn, .auth-form button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
